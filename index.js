@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const port = 3333
 
+app.use(express.urlencoded({ extended: false }))
+
 app.get('/',(req,res)=>{
     return res.json({
         success: true,
@@ -9,7 +11,7 @@ app.get('/',(req,res)=>{
     })
 })
 
-app.get('/',require(`./src/routes`))
+app.use('/',require(`./src/routes`))
 
 app.use(`*`,(req, res)=>{
     return res.status(404).json({

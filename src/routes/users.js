@@ -1,7 +1,10 @@
-const { listUser } = require("../controllers/users")
-
 const users = require(`express`).Router()
 
-users.get(`/`, listUser)
+const userController = require("../controllers/users")
+
+users.get(`/`, userController.getAllUser)
+users.post(`/`, userController.createListUsers)
+users.patch(`/`, userController.editListUsers)
+users.delete(`/`, userController.deleteListUsers)
 
 module.exports = users

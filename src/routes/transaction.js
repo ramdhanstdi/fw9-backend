@@ -1,7 +1,10 @@
-const { listTransaction } = require("../controllers/transaction")
-
 const transaction = require(`express`).Router()
 
-transaction.get(`/`, listTransaction)
+const transactionController = require("../controllers/transaction")
+
+transaction.get(`/`,transactionController.getListTransaction)
+transaction.post(`/`,transactionController.createListTransaction)
+transaction.patch(`/`,transactionController.editListTransaction)
+transaction.delete(`/`,transactionController.deleteListTransaction)
 
 module.exports = transaction
