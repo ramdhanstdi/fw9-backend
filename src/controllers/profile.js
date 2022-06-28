@@ -1,17 +1,17 @@
-const response = require(`../helpers/standarResponse`)
+const response = require('../helpers/standarResponse');
 
 exports.getListProfile = (req, res) =>{
-    return response(res,`List All Profile`)
-}
+  return response(res,'List All Profile');
+};
 
 exports.createListProfile = (req, res) =>{
-    return response(res,`Create Profile`)
-}
+  return response(res,'Create Profile');
+};
 
 exports.editListProfile = (req, res) =>{
-    return response(res,`Edit All Profile`)
-}
+  return response(res,'Edit All Profile');
+};
 
 exports.deleteListProfile = (req, res) =>{
-    return response(res,`Delete Profile`)
-}
+  return response(res,'Delete Profile');
+};
