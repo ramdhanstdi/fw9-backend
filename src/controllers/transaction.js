@@ -1,11 +1,16 @@
 const response = require('../helpers/standarResponse');
+const {ListTransactionModels, createTransactionModels} = require('../models/transaction');
 
 exports.getListTransaction = (req, res) =>{
-  return response(res, 'List All Transaction');
+  ListTransactionModels((result)=>{
+    return response(res, 'List All Transaction', result);
+  });
 };
 
 exports.createListTransaction = (req, res) =>{
-  return response(res,'Create Transaction');
+  createTransactionModels(req.body, result => {
+    return response(res,'Create Transaction', result[0]);
+  });
 };
 
 exports.editListTransaction = (req, res) =>{

@@ -1,20 +1,26 @@
 const response = require('../helpers/standarResponse');
-const usersModels = require('../models/users');
+const {ListUserModels, createUserModels, editUserModels, deleteUser} = require('../models/users');
 
 exports.getAllUser = (req, res) =>{
-  usersModels.getAllUser((result)=>{
+  ListUserModels((result)=>{
     return response(res,'User show',result);
   });
 };
 
 exports.createListUsers = (req, res) =>{
-  return response(res,'Create Users');
+  createUserModels(req.body, result=>{
+    return response(res,'Create Users Success', result[0]);
+  });
 };
 
 exports.editListUsers = (req, res) =>{
-  return response(res,'Edit All Users');
+  editUserModels(req.params.id, req.body, result=>{
+    return response(res,'Edit All Users', result[0]);
+  });
 };
 
 exports.deleteListUsers = (req, res) =>{
-  return response(res,'Delete Users');
+  deleteUser(req.params.id, result=>{
+    return response(res,'Delete Users', result[0]);
+  });
 };
