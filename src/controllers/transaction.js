@@ -1,5 +1,5 @@
 const response = require('../helpers/standarResponse');
-const {ListTransactionModels, createTransactionModels} = require('../models/transaction');
+const {ListTransactionModels, createTransactionModels, editTransactionModels} = require('../models/transaction');
 
 exports.getListTransaction = (req, res) =>{
   ListTransactionModels((result)=>{
@@ -14,7 +14,9 @@ exports.createListTransaction = (req, res) =>{
 };
 
 exports.editListTransaction = (req, res) =>{
-  return response(res,'Edit All Transaction');
+  editTransactionModels(req.params.id, req.body, result => {
+    return response(res,'Edit Transaction done', result[0]);
+  });
 };
 
 exports.deleteListTransaction = (req, res) =>{

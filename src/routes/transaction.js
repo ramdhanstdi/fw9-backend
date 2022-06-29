@@ -4,7 +4,7 @@ const transactionController = require('../controllers/transaction');
 
 transaction.get('/',transactionController.getListTransaction);
 transaction.post('/',transactionController.createListTransaction);
-transaction.patch('/',transactionController.editListTransaction);
-transaction.delete('/',transactionController.deleteListTransaction);
+transaction.patch('/:id',transactionController.editListTransaction);
+transaction.delete('/:id',transactionController.deleteListTransaction);
 
 module.exports = transaction;

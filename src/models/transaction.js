@@ -17,9 +17,9 @@ exports.createTransactionModels = (data, cb) =>{
   });
 };
 
-exports.editProfileModels = (id, data, cb) =>{
-  const que = 'UPDATE profile SET first_name=$1, last_name=$2, profile_photo=$3, num_phone=$4, balance=$5, user_id=$6 WHERE id=$7 RETURNING*';
-  const value = [data.first_name, data.last_name, data.profile_photo, data.num_phone, data.balance, data.user_id, id];
+exports.editTransactionModels = (id, data, cb) =>{
+  const que = 'UPDATE transaction SET sender_id=$1, receiver_id=$2, transfertype=$3, amount=$4, balance_id=$5, time_transfer=$6, notes=$7 WHERE id=$8 RETURNING*';
+  const value = [data.sender_id, data.receiver_id, data.transfertype, data.amount, data.balance_id, data.time_transfer, data.notes, id];
   db.query(que,value,(err, res)=>{
     if(err){
       console.log(err);
