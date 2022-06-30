@@ -2,7 +2,7 @@ const profile = require('express').Router();
 const {body} = require('express-validator');
 const profileControler = require('../controllers/profile');
 const validatorCreate = [
-  body('num_phone').isNumeric().withMessage('Number Not Valid')]
+  body('num_phone').isNumeric().withMessage('Number Not Valid')];
 
 
 profile.get('/',profileControler.getListProfile);
