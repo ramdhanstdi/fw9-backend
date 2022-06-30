@@ -10,10 +10,10 @@ exports.createUserModels = (data, cb) =>{
   const que = 'INSERT INTO users (username, email, password, pin) VALUES ($1, $2, $3, $4) RETURNING*';
   const value = [data.username, data.email, data.password, data.pin];
   db.query(que,value,(err, res)=>{
-    if(err){
-      console.log(err);
+    if(res){
+      cb(err, res.rows);
     }
-    cb(res.rows);
+    cb(err);
   });
 };
 
