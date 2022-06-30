@@ -21,10 +21,10 @@ exports.editUserModels = (id, data, cb) =>{
   const que = 'UPDATE users SET username=$1, email=$2, password=$3, pin=$4 WHERE id=$5 RETURNING*';
   const value = [data.username, data.email, data.password, data.pin, id];
   db.query(que,value,(err, res)=>{
-    if(err){
-      console.log(err);
+    if(res){
+      cb(err, res.rows);
     }
-    cb(res.rows);
+    cb(err);
   });
 };
 
@@ -32,9 +32,6 @@ exports.deleteUser = (id, cb) =>{
   const que = 'DELETE FROM users WHERE id=$1 RETURNING*';
   const value = [id];
   db.query(que,value,(err,res)=>{
-    if(err){
-      console.log(err);
-    }
-    cb(res.rows);
+    cb(res);
   });
 };

@@ -1,5 +1,7 @@
 const response = require('../helpers/standarResponse');
 const {ListTransactionModels, createTransactionModels, editTransactionModels} = require('../models/transaction');
+const errorResponse = require('../helpers/errorResponse');
+
 
 exports.getListTransaction = (req, res) =>{
   ListTransactionModels((result)=>{
@@ -15,10 +17,22 @@ exports.createListTransaction = (req, res) =>{
 
 exports.editListTransaction = (req, res) =>{
   editTransactionModels(req.params.id, req.body, result => {
-    return response(res,'Edit Transaction done', result[0]);
+    if(result.rowCount > 0){
+      return response(res,'Editted success', result[0]);
+    }else{
+      const eres = errorResponse('Transaction not found', 'id');
+      return  response(res, 'Error', eres, 400);
+    }
   });
 };
 
 exports.deleteListTransaction = (req, res) =>{
-  return response(res,'Delete Transaction');
+  this.deleteListTransaction(req.params.id, result => {
+    if(result.rowCount > 0){
+      return response(res,'Delete Users', result[0]);
+    }else{
+      const eres = errorResponse('Users has been deleted', 'id');
+      return  response(res, 'Error', eres, 400);
+    }
+  });
 };
