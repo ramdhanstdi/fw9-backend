@@ -15,12 +15,10 @@ exports.createListProfile = (req, res) =>{
     return response(res, 'Error Accured', validation.array(), 400);
   }
   createProfileModels(req.body, (err, result) =>{
-    if(err.code==='23505'&&err.detail.includes('num_phone')){
-      const eres = errorResponse('Number Phone already used', 'num_phone');
-      return response(res, 'Error', eres, 400);
-    }else{
-      return response(res,'Create Profile Success',result[0]);
+    if(err){
+      return errorResponse(err, res);
     }
+    return response(res,'Create Profile Success',result[0]);
   });
 };
 
@@ -31,9 +29,8 @@ exports.editListProfile = (req, res) =>{
   }
   editProfileModels(req.params.id, req.body, (err,result) => {
     if(result.rowCount > 0){
-      if(err.code==='23505'&&err.detail.includes('num_phone')){
-        const eres = errorResponse('Number Phone already used', 'num_phone');
-        return response(res, 'Error', eres, 400);
+      if(err){
+        return errorResponse(err, res);
       }else{
         return response(res,'Edit Profile Success', result[0]);
       }

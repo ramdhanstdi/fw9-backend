@@ -12,8 +12,9 @@ exports.createTransactionModels = (data, cb) =>{
   db.query(que,value,(err, res)=>{
     if(res){
       cb(err, res.rows);
+    }else{
+      cb(err);
     }
-    cb(err);
   });
 };
 
@@ -23,8 +24,9 @@ exports.editTransactionModels = (id, data, cb) =>{
   db.query(que,value,(err, res)=>{
     if(res){
       cb(err, res.rows);
+    }else{
+      cb(err);
     }
-    cb(err);
   });
 };
 

@@ -13,7 +13,7 @@ const response = (res, msg, result, status=200) => {
   if(result){
     data.result=result;
   }
-
+  
   return res.status(status).json(data);
 };
 

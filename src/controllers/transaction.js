@@ -10,13 +10,14 @@ exports.getListTransaction = (req, res) =>{
 };
 
 exports.createListTransaction = (req, res) =>{
-  createTransactionModels(req.body, result => {
+  createTransactionModels(req.body, (err, result) => {
+    console.log(err);
     return response(res,'Create Transaction', result[0]);
   });
 };
 
 exports.editListTransaction = (req, res) =>{
-  editTransactionModels(req.params.id, req.body, result => {
+  editTransactionModels(req.params.id, req.body,(err,result) => {
     if(result.rowCount > 0){
       return response(res,'Editted success', result[0]);
     }else{

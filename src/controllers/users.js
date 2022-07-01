@@ -16,15 +16,9 @@ exports.createListUsers = (req, res) =>{
   }
   createUserModels(req.body, (err,result)=>{
     if(err){
-      if(err.code==='23505'&&err.detail.includes('email')){
-        const eres = errorResponse('Email already exist', 'email');
-        return response(res, 'Error', eres, 400);
-      }else if(err.code==='23505'&&err.detail.includes('username')){
-        const eres = errorResponse('Username already exist', 'username');
-        return response(res, 'Error', eres, 400);
-      }
+      return errorResponse(err,res);
     }else{
-      return response(res,'Create Users Success', result[0]);
+      return response(res,'Create Users Success', result);
     }
   });
 };
@@ -35,16 +29,15 @@ exports.editListUsers = (req, res) =>{
     return response(res, 'Error Accured', validation.array(), 400);
   }
   editUserModels(req.params.id, req.body,(err, result)=>{
-    if(err){
-      if(err.code==='23505'&&err.detail.includes('email')){
-        const eres = errorResponse('Email already exist', 'email');
-        return response(res, 'Error', eres, 400);
-      }else if(err.code==='23505'&&err.detail.includes('username')){
-        const eres = errorResponse('Username already exist', 'username');
-        return response(res, 'Error', eres, 400);
+    if(result.rowCount > 0){
+      if(err){
+        return errorResponse(err,result);
+      }else{
+        return response(res,'Edit Users Success', result[0]);
       }
     }else{
-      return response(res,'Edit Users Success', result[0]);
+      const eres = errorResponse('Users has been deleted', 'id');
+      return  response(res, 'Error', eres, 400);
     }
   });
 };
