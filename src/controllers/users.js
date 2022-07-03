@@ -29,26 +29,22 @@ exports.editListUsers = (req, res) =>{
     return response(res, 'Error Accured', validation.array(), 400);
   }
   editUserModels(req.params.id, req.body,(err, result)=>{
-    if(result.rowCount > 0){
-      if(err){
-        return errorResponse(err,result);
-      }else{
-        return response(res,'Edit Users Success', result[0]);
-      }
-    }else{
-      const eres = errorResponse('Users has been deleted', 'id');
-      return  response(res, 'Error', eres, 400);
+    if(err){
+      return errorResponse(err,res);
     }
+    if(result.rowCount > 0){
+      return response(res,'Edit Users Success', result.rows[0]);
+    }
+    return  response(res, 'ID not Found', null, 400);
   });
 };
 
 exports.deleteListUsers = (req, res) =>{
   deleteUser(req.params.id, result=>{
     if(result.rowCount > 0){
-      return response(res,'Delete Users', result[0]);
+      return response(res,'Delete Users', result.rows[0]);
     }else{
-      const eres = errorResponse('Users has been deleted', 'id');
-      return  response(res, 'Error', eres, 400);
+      return  response(res, 'ID not Found', null, 400);
     }
   });
 };

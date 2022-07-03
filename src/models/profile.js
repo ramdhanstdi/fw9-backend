@@ -23,7 +23,7 @@ exports.editProfileModels = (id, data, cb) =>{
   const value = [data.first_name, data.last_name, data.profile_photo, data.num_phone, data.balance, data.user_id, id];
   db.query(que,value,(err, res)=>{
     if(res){
-      cb(err, res.rows);
+      cb(err, res);
     }else{
       cb(err);
 

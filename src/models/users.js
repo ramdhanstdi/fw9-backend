@@ -23,7 +23,7 @@ exports.editUserModels = (id, data, cb) =>{
   const value = [data.username, data.email, data.password, data.pin, id];
   db.query(que,value,(err, res)=>{
     if(res){
-      cb(err, res.rows);
+      cb(err, res);
     }else{
       cb(err);
     }

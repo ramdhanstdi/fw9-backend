@@ -28,23 +28,20 @@ exports.editListProfile = (req, res) =>{
     return response(res, 'Error Accured', validation.array(), 400);
   }
   editProfileModels(req.params.id, req.body, (err,result) => {
-    if(result.rowCount > 0){
-      if(err){
-        return errorResponse(err, res);
-      }else{
-        return response(res,'Edit Profile Success', result[0]);
-      }
-    }else{
-      const eres = errorResponse('Profile not found', 'id');
-      return  response(res, 'Error', eres, 400);
+    if(err){
+      return errorResponse(err,res);
     }
+    if(result.rowCount > 0){
+      return response(res,'Edit Profile Success', result.rows[0]);
+    }
+    return  response(res, 'ID not Found', null, 400);
   });
 };
 
 exports.deleteListProfile = (req, res) =>{
   deleteProfile(req.params.id, result => {
-    if(result.rowCount > 0){
-      return response(res,'Delete Profile', result[0]);
+    if(result.rowCount > 0){ //Check ID
+      return response(res,'Delete Profile', result.rows[0]);
     }else{
       const eres = errorResponse('Profile has been deleted', 'id');
       return  response(res, 'Error', eres, 400);

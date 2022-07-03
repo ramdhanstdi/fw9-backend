@@ -9,7 +9,6 @@ const errorHandling = (msg, param, location='body') => [
 ];
 
 const errorResponse = (err, result) => {
-  console.log(err);
   if(err.code==='23505'&&err.detail.includes('email')){
     const eres = errorHandling('Email already exist', 'email');
     return response(result, 'Error', eres, 400);
