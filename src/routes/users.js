@@ -19,7 +19,12 @@ const validatorCreate = [
     })
 ];
 
-users.get('/', userController.getAllUser);
+const queries = [
+  body('limit').toInt(),
+  body('page').toInt()
+];
+
+users.get('/',...queries,userController.getAllUser);
 users.post('/', ...validatorCreate,userController.createListUsers);
 users.patch('/:id',...validatorCreate,userController.editListUsers);
 users.delete('/:id', userController.deleteListUsers);
