@@ -45,6 +45,6 @@ exports.deleteProfile = (id, cb) =>{
   const que = 'DELETE FROM profile WHERE id=$1 RETURNING*';
   const value = [id];
   db.query(que,value,(err,res)=>{
-    cb(res);
+    cb(err,res);
   });
 };

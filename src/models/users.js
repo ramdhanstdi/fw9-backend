@@ -16,6 +16,16 @@ exports.countUserListModels = (tabel, keyword, cb) =>{
   });
 };
 
+exports.getDetailUser = (id,cb) => {
+  db.query(`SELECT * FROM users WHERE id=${id}`,(err,res)=>{
+    if(res){
+      cb(err, res);
+    }else{
+      cb(err);
+    }
+  });
+};
+
 exports.createUserModels = (data, cb) =>{
   const que = 'INSERT INTO users (username, email, password, pin) VALUES ($1, $2, $3, $4) RETURNING*';
   const value = [data.username, data.email, data.password, data.pin];
@@ -44,6 +54,6 @@ exports.deleteUser = (id, cb) =>{
   const que = 'DELETE FROM users WHERE id=$1 RETURNING*';
   const value = [id];
   db.query(que,value,(err,res)=>{
-    cb(res);
+    cb(err,res);
   });
 };

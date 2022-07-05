@@ -1,5 +1,5 @@
 const response = require('../helpers/standarResponse');
-const {ListUserModels, createUserModels, editUserModels, deleteUser, countUserListModels} = require('../models/users');
+const {ListUserModels, createUserModels, editUserModels, deleteUser, countUserListModels, getDetailUser} = require('../models/users');
 const {validationResult} = require('express-validator');
 const errorResponse = require('../helpers/errorResponse');
 const {LIMIT_DATA} = process.env;
@@ -22,6 +22,23 @@ exports.getAllUser = (req, res) =>{
       return response(res,'User show',pageInfo,result.rows);
     });
   });
+};
+
+exports.getDetailUser = (req,res)=>{
+  const getId = req.params.id;  
+  if(getId){
+    getDetailUser(getId,(err,result)=>{
+      console.log(result);
+      if(err){
+        return errorResponse(err,res);
+      }
+      if(result.rowCount > 0){
+        return response(res,'Detail Users',null,result.rows[0]);
+      }else{
+        return response(res,'ID not Found',null,null, 400);
+      }
+    });
+  }
 };
 
 exports.createListUsers = (req, res) =>{
@@ -55,7 +72,10 @@ exports.editListUsers = (req, res) =>{
 };
 
 exports.deleteListUsers = (req, res) =>{
-  deleteUser(req.params.id, result=>{
+  deleteUser(req.params.id, (err,result)=>{
+    if(err){
+      errorResponse(err,res);
+    }
     if(result.rowCount > 0){
       return response(res,'Delete Users Success',null,result.rows[0]);
     }else{

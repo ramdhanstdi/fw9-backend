@@ -54,8 +54,11 @@ exports.editListProfile = (req, res) =>{
 };
 
 exports.deleteListProfile = (req, res) =>{
-  deleteProfile(req.params.id, result => {
-    if(result.rowCount > 0){ //Check ID
+  deleteProfile(req.params.id,(err,result) => {
+    if(err){
+      return errorResponse(err,res);
+    }
+    if(result.rowCount > 0){ 
       return response(res,'Delete Profile', result.rows[0]);
     }else{
       const eres = errorResponse('Profile has been deleted', 'id');

@@ -30,6 +30,9 @@ exports.createListTransaction = (req, res) =>{
     return response(res, 'Error Accured',null,validation.array(), 400);
   }
   createTransactionModels(req.body, (err, result) => {
+    if(err){
+      return errorResponse(err,res);
+    }
     return response(res,'Create Transaction',null,result.rows[0]);
   });
 };
@@ -40,6 +43,9 @@ exports.editListTransaction = (req, res) =>{
     return response(res, 'Error Accured', validation.array(), 400);
   }
   editTransactionModels(req.params.id, req.body,(err,result) => {
+    if(err){
+      return errorResponse(err,res);
+    }
     if(result.rowCount > 0){
       return response(res,'Editted success', result[0]);
     }else{
@@ -50,7 +56,10 @@ exports.editListTransaction = (req, res) =>{
 };
 
 exports.deleteListTransaction = (req, res) =>{
-  this.deleteListTransaction(req.params.id, result => {
+  this.deleteListTransaction(req.params.id,(err,result) => {
+    if(err){
+      return errorResponse(err, res);
+    }
     if(result.rowCount > 0){
       return response(res,'Delete Users', result.rows[0]);
     }else{

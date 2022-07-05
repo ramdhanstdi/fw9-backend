@@ -56,7 +56,10 @@ exports.editTypeTransaction = (req,res) => {
 };
 
 exports.deleteTypeTransaction = (req,res) =>{
-  deleteTypeTransactionModels(req.params.id, (result)=>{
+  deleteTypeTransactionModels(req.params.id, (err,result)=>{
+    if(err){
+      return errorResponse(err,res);
+    }
     if(result.rowCount>0){
       return response(res, 'Delete Successfull', result.rows[0]);
     }else{

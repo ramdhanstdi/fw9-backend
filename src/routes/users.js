@@ -7,7 +7,8 @@ const validatorCreate = [
   body('email')
     .isEmail().withMessage('Email Not Valid'),
   body('username')
-    .isLength({min:5}).withMessage('Username should have min 5char'),
+    .isLength({min:5}).withMessage('Username should have min 5char')
+    .trim().escape(),
   body('pin')
     .isNumeric().withMessage('Input Only Number')
     .isLength({min:6, max:6}).withMessage('Pin should only 6 digit'),
@@ -24,6 +25,7 @@ const queries = [
   body('page').toInt()
 ];
 
+users.get('/:id',...queries,userController.getDetailUser);
 users.get('/',...queries,userController.getAllUser);
 users.post('/', ...validatorCreate,userController.createListUsers);
 users.patch('/:id',...validatorCreate,userController.editListUsers);

@@ -4,7 +4,8 @@ const transactionController = require('../controllers/transaction');
 
 const validator = [
   body('receiver_id').isLength({min:1}).withMessage('Receiver can\'t be empty'),
-  body('amount').isLength({min:1}).withMessage('Amount can\'t be empty'),
+  body('amount').isInt({min:1}).withMessage('Input only positive number')
+    .isLength({min:1}).withMessage('Amount can\'t be empty'),
   body('transfertype').isLength({min:1}).withMessage('Transfer type can\'t be empty'),
   body('time_transfer').isLength({min:1}).withMessage('Time Transfer can\'t be empty')
 ];
