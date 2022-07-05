@@ -1,12 +1,22 @@
 const db = require('../helpers/db');
+const {LIMIT_DATA} = process.env;
 
-exports.ListTypeTransferModels = (cb) => {
-  db.query('SELECT * FROM typetransaction ORDER BY id ASC',(err, res)=>{
-    cb(res.rows);
+exports.ListTypeTransactionModels = (tabel, keyword,method,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
+  const que = `SELECT * FROM typetransaction WHERE ${tabel} LIKE '%${keyword}%' ORDER BY id ${method} LIMIT $1 OFFSET $2`;
+  const value = [limit,offset];
+  db.query(que,value,(err,res)=>{
+    cb(err,res);
   });
 };
 
-exports.createTypeTransferModels = (data, cb) =>{
+exports.countTypeTransactionModels = (tabel, keyword, cb) =>{
+  const que = `SELECT * FROM typetransaction WHERE ${tabel} LIKE '%${keyword}%'`;
+  db.query(que,(err,res)=>{
+    cb(err,res.rowCount);
+  });
+};
+
+exports.createTypeTransactionModels = (data, cb) =>{
   const que = 'INSERT INTO typetransaction (name, description) VALUES ($1, $2) RETURNING*';
   const value = [data.name, data.description];
   db.query(que,value,(err, res)=>{
@@ -18,7 +28,7 @@ exports.createTypeTransferModels = (data, cb) =>{
   });
 };
 
-exports.editTypeTransferModels = (id, data, cb) =>{
+exports.editTypeTransactionModels = (id, data, cb) =>{
   const que = 'UPDATE typetransaction SET name=$1, description=$2 WHERE id=$3 RETURNING*';
   const value = [data.name, data.description, id];
   db.query(que,value,(err, res)=>{
@@ -30,7 +40,7 @@ exports.editTypeTransferModels = (id, data, cb) =>{
   });
 };
 
-exports.deleteTypeTransferModels = (id, cb) =>{
+exports.deleteTypeTransactionModels = (id, cb) =>{
   const que = 'DELETE FROM typetransaction WHERE id=$1 RETURNING*';
   const value = [id];
   db.query(que,value,(err,res)=>{

@@ -1,8 +1,18 @@
 const db = require('../helpers/db');
+const {LIMIT_DATA} = process.env;
 
-exports.ListProfileModels = (cb) => {
-  db.query('SELECT * FROM profile',(err, res)=>{
-    cb(res.rows);
+exports.ListProfileModels = (tabel, keyword,method,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
+  const que = `SELECT * FROM profile WHERE ${tabel} LIKE '%${keyword}%' ORDER BY id ${method} LIMIT $1 OFFSET $2`;
+  const value = [limit,offset];
+  db.query(que,value,(err,res)=>{
+    cb(err,res);
+  });
+};
+
+exports.countProfileListModels = (tabel, keyword, cb) =>{
+  const que = `SELECT * FROM profile WHERE ${tabel} LIKE '%${keyword}%'`;
+  db.query(que,(err,res)=>{
+    cb(err,res.rowCount);
   });
 };
 

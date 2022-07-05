@@ -1,8 +1,18 @@
 const db = require('../helpers/db');
+const {LIMIT_DATA} = process.env;
 
-exports.ListTransactionModels = (cb) => {
-  db.query('SELECT * FROM transaction',(err, res)=>{
-    cb(res.rows);
+exports.ListTransactionModels = (tabel, keyword,method,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
+  const que = `SELECT * FROM transaction WHERE ${tabel} LIKE '%${keyword}%' ORDER BY time_transfer ${method} LIMIT $1 OFFSET $2`;
+  const value = [limit,offset];
+  db.query(que,value,(err,res)=>{
+    cb(err,res);
+  });
+};
+
+exports.countTransactionListModels = (tabel, keyword, cb) =>{
+  const que = `SELECT * FROM transaction WHERE ${tabel} LIKE '%${keyword}%'`;
+  db.query(que,(err,res)=>{
+    cb(err,res.rowCount);
   });
 };
 
@@ -11,7 +21,7 @@ exports.createTransactionModels = (data, cb) =>{
   const value = [data.sender_id, data.receiver_id, data.transfertype, data.amount, data.time_transfer, data.notes];
   db.query(que,value,(err, res)=>{
     if(res){
-      cb(err, res.rows);
+      cb(err, res);
     }else{
       cb(err);
     }

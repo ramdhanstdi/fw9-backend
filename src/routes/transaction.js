@@ -9,6 +9,7 @@ const validator = [
   body('time_transfer').isLength({min:1}).withMessage('Time Transfer can\'t be empty')
 ];
 
+
 transaction.get('/',transactionController.getListTransaction);
 transaction.post('/',...validator,transactionController.createListTransaction);
 transaction.patch('/:id',...validator,transactionController.editListTransaction);

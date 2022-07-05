@@ -1,16 +1,16 @@
 const db = require('../helpers/db');
 const {LIMIT_DATA} = process.env;
 
-exports.ListUserModels = (keyword,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
-  const que = `SELECT * FROM users WHERE username LIKE '%${keyword}%' OR email LIKE '%${keyword}%' ORDER BY id ASC LIMIT $1 OFFSET $2`;
+exports.ListUserModels = (tabel, keyword,method,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
+  const que = `SELECT * FROM users WHERE ${tabel} LIKE '%${keyword}%' ORDER BY id ${method} LIMIT $1 OFFSET $2`;
   const value = [limit,offset];
   db.query(que,value,(err,res)=>{
     cb(err,res);
   });
 };
 
-exports.countUserListModels = (keyword, cb) =>{
-  const que = `SELECT * FROM users WHERE username LIKE '%${keyword}%' OR email LIKE '%${keyword}%'`;
+exports.countUserListModels = (tabel, keyword, cb) =>{
+  const que = `SELECT * FROM users WHERE ${tabel} LIKE '%${keyword}%'`;
   db.query(que,(err,res)=>{
     cb(err,res.rowCount);
   });

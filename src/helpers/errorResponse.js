@@ -24,7 +24,7 @@ const errorResponse = (err, result) => {
   }
   if(err.code==='23505'&&err.detail.includes('user_id')){
     console.log('test');
-    const eres = errorHandling('User Id already used', 'num_phone');
+    const eres = errorHandling('User Id already used', 'user_id');
     return response(result, 'Error', null, eres, 400);
   }
   return response(result, 'Error', null, null, 400);
