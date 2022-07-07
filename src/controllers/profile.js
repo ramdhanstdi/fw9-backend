@@ -58,7 +58,7 @@ exports.createListProfile = (req, res) =>{
 //Edit Profile
 exports.editListProfile = (req, res) =>{
   let photo = null;
-  req.file===null? null:photo=req.file.filename;
+  req.file? photo=req.file.filename:photo = null;
   editProfileModels(req.params.id,req.body,photo,(err,result) => {
     if(err){
       return errorResponse(err,res);

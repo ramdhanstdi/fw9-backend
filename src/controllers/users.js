@@ -1,7 +1,6 @@
-const response = require('../helpers/standarResponse');
 const {ListUserModels, createUserModels, editUserModels, deleteUser, countUserListModels, getDetailUser} = require('../models/users');
-const {validationResult} = require('express-validator');
 const errorResponse = require('../helpers/errorResponse');
+const response = require('../helpers/standarResponse');
 const {LIMIT_DATA} = process.env;
 
 exports.getAllUser = (req, res) =>{
@@ -42,10 +41,6 @@ exports.getDetailUser = (req,res)=>{
 };
 
 exports.createListUsers = (req, res) =>{
-  const validation = validationResult(req);
-  if(!validation.isEmpty()){
-    return response(res, 'Error Accured',null,validation.array(), 400);
-  }
   createUserModels(req.body, (err,result)=>{
     if(err){
       return errorResponse(err,res);
@@ -56,10 +51,6 @@ exports.createListUsers = (req, res) =>{
 };
 
 exports.editListUsers = (req, res) =>{
-  const validation = validationResult(req);
-  if(!validation.isEmpty()){
-    return response(res, 'Error Accured',null,validation.array(), 400);
-  }
   editUserModels(req.params.id, req.body,(err, result)=>{
     if(err){
       return errorResponse(err,res);

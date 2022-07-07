@@ -1,7 +1,6 @@
-const response = require('../helpers/standarResponse');
-const {validationResult} = require('express-validator');
 const {ListTransactionModels, createTransactionModels, editTransactionModels, countTransactionListModels, getDetailTransaction} = require('../models/transaction');
 const errorResponse = require('../helpers/errorResponse');
+const response = require('../helpers/standarResponse');
 const {LIMIT_DATA} = process.env;
 
 exports.getListTransaction = (req, res) =>{
@@ -42,10 +41,6 @@ exports.getDetailTransaction = (req,res)=>{
 };
 
 exports.createListTransaction = (req, res) =>{
-  const validation = validationResult(req);
-  if(!validation.isEmpty()){
-    return response(res, 'Error Accured',null,validation.array(), 400);
-  }
   createTransactionModels(req.body, (err, result) => {
     if(err){
       return errorResponse(err,res);
@@ -55,19 +50,15 @@ exports.createListTransaction = (req, res) =>{
 };
 
 exports.editListTransaction = (req, res) =>{
-  const validation = validationResult(req);
-  if(!validation.isEmpty()){
-    return response(res, 'Error Accured', validation.array(), 400);
-  }
   editTransactionModels(req.params.id, req.body,(err,result) => {
     if(err){
+      console.log(err);
       return errorResponse(err,res);
     }
     if(result.rowCount > 0){
-      return response(res,'Editted success', result[0]);
+      return response(res,'Editted success',null,result.rows[0]);
     }else{
-      const eres = errorResponse('Transaction not found', 'id');
-      return  response(res, 'Error',null, eres, 400);
+      return response(res, 'ID not found',null, null, 400);
     }
   });
 };
@@ -78,10 +69,9 @@ exports.deleteListTransaction = (req, res) =>{
       return errorResponse(err, res);
     }
     if(result.rowCount > 0){
-      return response(res,'Delete Users', result.rows[0]);
+      return response(res,'Delete Users',null,result.rows[0]);
     }else{
-      const eres = errorResponse('Users has been deleted', 'id');
-      return  response(res, 'Error',null,eres, 400);
+      return response(res, 'ID not found',null, null, 400);
     }
   });
 };

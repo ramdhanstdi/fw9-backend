@@ -1,5 +1,4 @@
 const response = require('../helpers/standarResponse');
-const {validationResult} = require('express-validator');
 const errorResponse = require('../helpers/errorResponse');
 const {ListTypeTransactionModels, countTypeTransactionModels, createTypeTransactionModels, editTypeTransactionModels, deleteTypeTransactionModels, getDetailTypeTransaction} = require('../models/typeTransaction');
 const {LIMIT_DATA} = process.env;
@@ -42,10 +41,6 @@ exports.getDetailTypeTransaction = (req,res)=>{
 };
 
 exports.createTypeTransaction = (req,res) => {
-  const validation = validationResult(req);
-  if(!validation.isEmpty()){
-    return response(res,'Error',null,validation.array(),400);
-  }
   createTypeTransactionModels(req.body,(err, result)=>{
     if(err){
       return errorResponse(err,res);
@@ -56,17 +51,13 @@ exports.createTypeTransaction = (req,res) => {
 };
 
 exports.editTypeTransaction = (req,res) => {
-  const validation = validationResult(req);
-  if(!validation.isEmpty()){
-    return response(res, 'Error',null, validation.array(),400);
-  }
   editTypeTransactionModels(req.params.id, req.body,(err, result)=>{
     console.log(result);
     if(err){
       return errorResponse(err,res);
     }
     if(result.rowCount > 0){
-      return response(res,'Edit Successfull', null,result.rows[0]);
+      return response(res,'Edit Successfull',null,result.rows[0]);
     }
     return  response(res, 'ID not Found', null,null, 400);
   });
@@ -78,7 +69,7 @@ exports.deleteTypeTransaction = (req,res) =>{
       return errorResponse(err,res);
     }
     if(result.rowCount>0){
-      return response(res, 'Delete Successfull', result.rows[0]);
+      return response(res, 'Delete Successfull',null,result.rows[0]);
     }else{
       return response(res, 'ID not Found', null,null, 400);
     }
