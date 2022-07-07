@@ -4,8 +4,10 @@ const {PORT: port} = process.env;
 const express = require('express');
 const db = require('./src/helpers/db');
 const app = express();
+global.__basepath = __dirname;
 
 app.use(express.urlencoded({ extended: false }));
+app.use('/public',express.static('assets'));
 
 app.get('/',(req,res)=>{
   return res.json({
