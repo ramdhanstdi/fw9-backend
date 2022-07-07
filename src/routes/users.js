@@ -1,5 +1,6 @@
 const users = require('express').Router();
 const {body} = require('express-validator');
+const validation = require('../middleware/validation');
 const userController = require('../controllers/users');
 const bcrypt = require('bcrypt');
 
@@ -20,15 +21,10 @@ const validatorCreate = [
     })
 ];
 
-const queries = [
-  body('limit').toInt(),
-  body('page').toInt()
-];
-
-users.get('/:id',...queries,userController.getDetailUser);
-users.get('/',...queries,userController.getAllUser);
-users.post('/', ...validatorCreate,userController.createListUsers);
-users.patch('/:id',...validatorCreate,userController.editListUsers);
+users.get('/:id',userController.getDetailUser);
+users.get('/',userController.getAllUser);
+users.post('/', ...validatorCreate,validation,userController.createListUsers);
+users.patch('/:id',...validatorCreate,validation,userController.editListUsers);
 users.delete('/:id', userController.deleteListUsers);
 
 module.exports = users;

@@ -5,11 +5,14 @@ const {body} = require('express-validator');
 const uploadPhoto = require('../middleware/upload');
 
 const validator = [
-  body('user_id').isInt().withMessage('Insert Only Number'),
-  body('first_name').isLength({min:1}).withMessage('First Name should not Empty'),
-  body('num_phone').isMobilePhone(['id-ID'])
+  body('user_id').optional({ checkFalsy: true }).escape().isInt().withMessage('Insert Only Number'),
+  body('first_name').optional({ checkFalsy: true }).escape().isLength({min:1}).withMessage('First Name should not Empty'),
+  body('num_phone').optional({ checkFalsy: true }).escape().isMobilePhone(['id-ID']),
+  body('last_name').optional({ checkFalsy: true }).escape(),
+  body('balance').optional({ checkFalsy: true }).escape()
 ];
 
+profile.get('/:id',profileControler.getDetailProfile);
 profile.get('/',profileControler.getListProfile);
 profile.post('/',uploadPhoto,...validator,validation,profileControler.createListProfile);
 profile.patch('/:id',uploadPhoto,...validator,validation,profileControler.editListProfile);

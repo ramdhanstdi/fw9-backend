@@ -1,4 +1,5 @@
 const transaction = require('express').Router();
+const validation = require('../middleware/validation');
 const {body} = require('express-validator');
 const transactionController = require('../controllers/transaction');
 
@@ -10,10 +11,10 @@ const validator = [
   body('time_transfer').isISO8601().withMessage('Time Transfer in Valid')
 ];
 
-
+transaction.get('/:id',transactionController.getDetailTransaction);
 transaction.get('/',transactionController.getListTransaction);
-transaction.post('/',...validator,transactionController.createListTransaction);
-transaction.patch('/:id',...validator,transactionController.editListTransaction);
+transaction.post('/',...validator,validation,transactionController.createListTransaction);
+transaction.patch('/:id',...validator,validation,transactionController.editListTransaction);
 transaction.delete('/:id',transactionController.deleteListTransaction);
 
 module.exports = transaction;
