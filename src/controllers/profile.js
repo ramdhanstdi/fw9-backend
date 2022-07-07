@@ -1,8 +1,6 @@
 const response = require('../helpers/standarResponse');
-const {validationResult} = require('express-validator');
 const {ListProfileModels, createProfileModels, editProfileModels,deleteProfile, countProfileListModels, getDetailProfile} = require('../models/profile');
 const errorResponse = require('../helpers/errorResponse');
-const upload = require('../helpers/upload').single('photo');
 const {LIMIT_DATA} = process.env;
 
 //Access Profile
@@ -46,44 +44,29 @@ exports.getDetailProfile = (req,res)=>{
 
 //Create Profile
 exports.createListProfile = (req, res) =>{
-  upload(req,res,(err)=>{
+  let photo = null;
+  req.file===null? null:photo=req.file.filename;
+  createProfileModels(req.body,photo,(err, result) =>{
     if(err){
       console.log(err);
+      return errorResponse(err, res);
     }
-    const validation = validationResult(req);
-    if(!validation.isEmpty()){
-      return response(res, 'Error Accured',null ,validation.array(), 400);
-    }
-    createProfileModels(req.body, (err, result) =>{
-      if(err){
-        console.log(err);
-        return errorResponse(err, res);
-      }
-      return response(res,'Create Profile Success',null,result[0]);
-    });
+    return response(res,'Create Profile Success',null,result[0]);
   });
 };
 
 //Edit Profile
 exports.editListProfile = (req, res) =>{
-  upload(req,res,(err)=>{
+  let photo = null;
+  req.file===null? null:photo=req.file.filename;
+  editProfileModels(req.params.id,req.body,photo,(err,result) => {
     if(err){
-      console.log(err);
-      return response(res,'Failed Upload', null,null,400);
+      return errorResponse(err,res);
     }
-    const validation = validationResult(req);
-    if(!validation.isEmpty()){
-      return response(res, 'Error Accured',null,validation.array(), 400);
+    if(result.rowCount > 0){
+      return response(res,'Edit Profile Success',null,result.rows[0]);
     }
-    editProfileModels(req.params.id,req.body,req.file,(err,result) => {
-      if(err){
-        return errorResponse(err,res);
-      }
-      if(result.rowCount > 0){
-        return response(res,'Edit Profile Success',null,result.rows[0]);
-      }
-      return  response(res, 'ID not Found',null,null, 400);
-    });
+    return  response(res, 'ID not Found',null,null, 400);
   });
 };
 

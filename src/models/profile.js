@@ -40,9 +40,18 @@ exports.createProfileModels = (data, cb) =>{
 
 
 exports.editProfileModels = (id, data,picture, cb) =>{
-  console.log(id);
+  const obj = {
+    first_name: data.first_name,
+    last_name: data.last_name,
+    num_phone: data.num_phone,
+    balance: data.balance,
+    user_id: data.user_id,
+    picture
+  };
+  console.log(obj);
+
   const que = 'UPDATE profile SET first_name=$1, last_name=$2, profile_photo=$3, num_phone=$4, balance=$5, user_id=$6 WHERE id=$7 RETURNING*';
-  const value = [data.first_name, data.last_name, picture.filename, data.num_phone, data.balance, data.user_id, id];
+  const value = [data.first_name, data.last_name, picture, data.num_phone, data.balance, data.user_id, id];
   db.query(que,value,(err, res)=>{
     if(res){
       cb(err, res);
