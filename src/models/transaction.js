@@ -30,7 +30,6 @@ exports.createTransactionModels = (data, cb) =>{
   const que = 'INSERT INTO transaction (sender_id, receiver_id, transfertype, amount, time_transfer, notes) VALUES ($1, $2, $3, $4, $5, $6) RETURNING*';
   const value = [data.sender_id, data.receiver_id, data.transfertype, data.amount, data.time_transfer, data.notes];
   db.query(que,value,(err, res)=>{
-    console.log(err);
     if(res){
       cb(err, res);
     }else{

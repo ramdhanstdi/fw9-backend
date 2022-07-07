@@ -26,12 +26,29 @@ exports.getDetailProfile = (id,cb) => {
   });
 };
 
-exports.createProfileModels = (data, cb) =>{
-  const que = 'INSERT INTO profile (first_name, last_name, profile_photo, num_phone, balance, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING*';
-  const value = [data.first_name, data.last_name, data.profile_photo, data.num_phone, data.balance, data.user_id];
+exports.createProfileModels = (data,picture,cb) =>{
+  let value = [];
+  const filtered = {};
+  const obj = {
+    first_name: data.first_name,
+    last_name: data.last_name,
+    num_phone: data.num_phone,
+    balance: data.balance,
+    user_id: data.user_id,
+    profile_photo: picture
+  };
+  for(let i in obj){
+    if(obj[i]!==null){
+      filtered[i]=obj[i];
+      value.push(obj[i]);
+    }
+  }
+  const key = Object.keys(filtered);
+  const resulting = key.map((o,index)=>`${o}=$${index+1}`);
+  const que = `UPDATE profile SET ${resulting}RETURNING*`;
   db.query(que,value,(err, res)=>{
     if(res){
-      cb(err, res.rows);
+      cb(err, res);
     }else{
       cb(err);
     }
@@ -40,18 +57,25 @@ exports.createProfileModels = (data, cb) =>{
 
 
 exports.editProfileModels = (id, data,picture, cb) =>{
+  let value = [id];
+  const filtered = {};
   const obj = {
     first_name: data.first_name,
     last_name: data.last_name,
     num_phone: data.num_phone,
     balance: data.balance,
     user_id: data.user_id,
-    picture
+    profile_photo: picture
   };
-  console.log(obj);
-
-  const que = 'UPDATE profile SET first_name=$1, last_name=$2, profile_photo=$3, num_phone=$4, balance=$5, user_id=$6 WHERE id=$7 RETURNING*';
-  const value = [data.first_name, data.last_name, picture, data.num_phone, data.balance, data.user_id, id];
+  for(let i in obj){
+    if(obj[i]!==null){
+      filtered[i]=obj[i];
+      value.push(obj[i]);
+    }
+  }
+  const key = Object.keys(filtered);
+  const resulting = key.map((o,index)=>`${o}=$${index+2}`);
+  const que = `UPDATE profile SET ${resulting} WHERE id=$1 RETURNING*`;
   db.query(que,value,(err, res)=>{
     if(res){
       cb(err, res);
