@@ -1,18 +1,28 @@
 const db = require('../helpers/db');
 const {LIMIT_DATA} = process.env;
 
-exports.ListProfileModels = (tabel, keyword,method,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
-  const que = `SELECT * FROM profile WHERE ${tabel} LIKE '%${keyword}%' ORDER BY id ${method} LIMIT $1 OFFSET $2`;
+exports.ListProfileModels = (searchBy, keyword,method,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
+  const que = `SELECT * FROM profile WHERE ${searchBy} LIKE '%${keyword}%' ORDER BY id ${method} LIMIT $1 OFFSET $2`;
   const value = [limit,offset];
   db.query(que,value,(err,res)=>{
     cb(err,res);
   });
 };
 
-exports.countProfileListModels = (tabel, keyword, cb) =>{
-  const que = `SELECT * FROM profile WHERE ${tabel} LIKE '%${keyword}%'`;
+exports.countProfileListModels = (searchBy, keyword, cb) =>{
+  const que = `SELECT * FROM profile WHERE ${searchBy} LIKE '%${keyword}%'`;
   db.query(que,(err,res)=>{
     cb(err,res.rowCount);
+  });
+};
+
+exports.getDetailProfile = (id,cb) => {
+  db.query(`SELECT * FROM profile WHERE id=${id}`,(err,res)=>{
+    if(res){
+      cb(err, res);
+    }else{
+      cb(err);
+    }
   });
 };
 
@@ -28,15 +38,16 @@ exports.createProfileModels = (data, cb) =>{
   });
 };
 
-exports.editProfileModels = (id, data, cb) =>{
+
+exports.editProfileModels = (id, data,picture, cb) =>{
+  console.log(id);
   const que = 'UPDATE profile SET first_name=$1, last_name=$2, profile_photo=$3, num_phone=$4, balance=$5, user_id=$6 WHERE id=$7 RETURNING*';
-  const value = [data.first_name, data.last_name, data.profile_photo, data.num_phone, data.balance, data.user_id, id];
+  const value = [data.first_name, data.last_name, picture.filename, data.num_phone, data.balance, data.user_id, id];
   db.query(que,value,(err, res)=>{
     if(res){
       cb(err, res);
     }else{
       cb(err);
-
     }
   });
 };

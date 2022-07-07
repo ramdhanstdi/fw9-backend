@@ -5,15 +5,15 @@ const errorResponse = require('../helpers/errorResponse');
 const {LIMIT_DATA} = process.env;
 
 exports.getAllUser = (req, res) =>{
-  const {tabel='username',s='',method='ASC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
+  const {searchBy='username',search='',method='ASC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
   const offset = (page-1) * limit;
 
-  ListUserModels(tabel,s,method,limit,offset, (err, result)=>{
+  ListUserModels(searchBy,search,method,limit,offset, (err, result)=>{
     if(result.rows.length<1){      
       return res.redirect('/404');
     }
     const pageInfo = {};
-    countUserListModels(tabel,s,(err,totalusers)=>{
+    countUserListModels(searchBy,search,(err,totalusers)=>{
       pageInfo.totalData = totalusers;
       pageInfo.totalPage = Math.ceil(totalusers/limit);
       pageInfo.curretPage = parseInt(page);

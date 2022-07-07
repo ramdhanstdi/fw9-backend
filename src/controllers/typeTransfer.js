@@ -1,19 +1,19 @@
 const response = require('../helpers/standarResponse');
 const {validationResult} = require('express-validator');
 const errorResponse = require('../helpers/errorResponse');
-const {ListTypeTransactionModels, countTypeTransactionModels, createTypeTransactionModels, editTypeTransactionModels, deleteTypeTransactionModels} = require('../models/typeTransaction');
+const {ListTypeTransactionModels, countTypeTransactionModels, createTypeTransactionModels, editTypeTransactionModels, deleteTypeTransactionModels, getDetailTypeTransaction} = require('../models/typeTransaction');
 const {LIMIT_DATA} = process.env;
 
 exports.getAllTypeTransaction =(req, res) =>{
-  const {tabel='name',s='',method='ASC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
+  const {searchBy='name',search='',method='ASC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
   const offset = (page-1) * limit;
 
-  ListTypeTransactionModels(tabel,s,method,limit,offset, (err, result)=>{
+  ListTypeTransactionModels(searchBy,search,method,limit,offset, (err, result)=>{
     if(result.rows.length<1){      
       return res.redirect('/404');
     }
     const pageInfo = {};
-    countTypeTransactionModels(tabel,s,(err,totalusers)=>{
+    countTypeTransactionModels(searchBy,search,(err,totalusers)=>{
       pageInfo.totalData = totalusers;
       pageInfo.totalPage = Math.ceil(totalusers/limit);
       pageInfo.curretPage = parseInt(page);
@@ -22,6 +22,23 @@ exports.getAllTypeTransaction =(req, res) =>{
       return response(res,'User show',pageInfo,result.rows);
     });
   });
+};
+
+exports.getDetailTypeTransaction = (req,res)=>{
+  const getId = req.params.id;  
+  if(getId){
+    getDetailTypeTransaction(getId,(err,result)=>{
+      console.log(result);
+      if(err){
+        return errorResponse(err,res);
+      }
+      if(result.rowCount > 0){
+        return response(res,'Detail Users',null,result.rows[0]);
+      }else{
+        return response(res,'ID not Found',null,null, 400);
+      }
+    });
+  }
 };
 
 exports.createTypeTransaction = (req,res) => {

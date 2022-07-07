@@ -7,7 +7,7 @@ const validator = [
   body('amount').isInt({min:1}).withMessage('Input only positive number')
     .isLength({min:1}).withMessage('Amount can\'t be empty'),
   body('transfertype').isLength({min:1}).withMessage('Transfer type can\'t be empty'),
-  body('time_transfer').isLength({min:1}).withMessage('Time Transfer can\'t be empty')
+  body('time_transfer').isISO8601().withMessage('Time Transfer in Valid')
 ];
 
 

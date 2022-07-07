@@ -1,18 +1,28 @@
 const db = require('../helpers/db');
 const {LIMIT_DATA} = process.env;
 
-exports.ListTypeTransactionModels = (tabel, keyword,method,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
-  const que = `SELECT * FROM typetransaction WHERE ${tabel} LIKE '%${keyword}%' ORDER BY id ${method} LIMIT $1 OFFSET $2`;
+exports.ListTypeTransactionModels = (searchBy, keyword,method,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
+  const que = `SELECT * FROM typetransaction WHERE ${searchBy} LIKE '%${keyword}%' ORDER BY id ${method} LIMIT $1 OFFSET $2`;
   const value = [limit,offset];
   db.query(que,value,(err,res)=>{
     cb(err,res);
   });
 };
 
-exports.countTypeTransactionModels = (tabel, keyword, cb) =>{
-  const que = `SELECT * FROM typetransaction WHERE ${tabel} LIKE '%${keyword}%'`;
+exports.countTypeTransactionModels = (searchBy, keyword, cb) =>{
+  const que = `SELECT * FROM typetransaction WHERE ${searchBy} LIKE '%${keyword}%'`;
   db.query(que,(err,res)=>{
     cb(err,res.rowCount);
+  });
+};
+
+exports.getDetailTypeTransaction = (id,cb) => {
+  db.query(`SELECT * FROM typetransaction WHERE id=${id}`,(err,res)=>{
+    if(res){
+      cb(err, res);
+    }else{
+      cb(err);
+    }
   });
 };
 

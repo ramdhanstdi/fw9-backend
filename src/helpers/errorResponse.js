@@ -38,6 +38,9 @@ const errorResponse = (err, result) => {
   }if(err.code==='23503'&&err.detail.includes('transfertype')){
     const eres = errorHandling('Id not found in tabel typeTransaction', 'transfertype');
     return response(result, 'Error', null, eres, 400);
+  }if(err.code==='22P02'){
+    const eres = errorHandling('Wrong Input or Empty', 'user_id');
+    return response(result, 'Error', null, eres, 400);
   }
   return response(result, 'Error', null, null, 400);
 };
