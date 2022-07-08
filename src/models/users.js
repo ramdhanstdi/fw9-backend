@@ -26,12 +26,26 @@ exports.getDetailUser = (id,cb) => {
   });
 };
 
+exports.getUserByEmail = (email,cb) => {
+  const que ='SELECT * FROM users WHERE email=$1';
+  const value = [email];
+  db.query(que,value,(err,res)=>{
+    console.log(err);
+    if(res){
+      cb(err, res);
+    }else{
+      cb(err);
+    }
+  });
+};
+
+
 exports.createUserModels = (data, cb) =>{
   const que = 'INSERT INTO users (username, email, password, pin) VALUES ($1, $2, $3, $4) RETURNING*';
   const value = [data.username, data.email, data.password, data.pin];
   db.query(que,value,(err, res)=>{
     if(res){
-      cb(err, res.rows);
+      cb(err, res);
     }else{
       cb(err);
     }
@@ -39,8 +53,25 @@ exports.createUserModels = (data, cb) =>{
 };
 
 exports.editUserModels = (id, data, cb) =>{
-  const que = 'UPDATE users SET username=$1, email=$2, password=$3, pin=$4 WHERE id=$5 RETURNING*';
-  const value = [data.username, data.email, data.password, data.pin, id];
+  let value = [id];
+  const filtered = {};
+  const obj = {
+    username: data.username,
+    email: data.email,
+    password: data.password,
+    pin: data.pin,
+  };
+  for(let i in obj){
+    if(obj[i]!==null){
+      if(obj[i]!==undefined){
+        filtered[i]=obj[i];
+        value.push(obj[i]);
+      }
+    }
+  }
+  const key = Object.keys(filtered);
+  const resulting = key.map((o,index)=>`${o}=$${index+2}`);
+  const que = `UPDATE users SET ${resulting} WHERE id=$1 RETURNING*`;
   db.query(que,value,(err, res)=>{
     if(res){
       cb(err, res);
