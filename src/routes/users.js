@@ -1,30 +1,12 @@
 const users = require('express').Router();
-const {body} = require('express-validator');
 const validation = require('../middleware/validation');
 const userController = require('../controllers/users');
-const bcrypt = require('bcrypt');
-
-const validatorCreate = [
-  body('email')
-    .isEmail().withMessage('Email Not Valid'),
-  body('username')
-    .isLength({min:5}).withMessage('Username should have min 5char')
-    .trim().escape(),
-  body('pin')
-    .isNumeric().withMessage('Input Only Number')
-    .isLength({min:6, max:6}).withMessage('Pin should only 6 digit'),
-  body('password')
-    .isLength({min:8}).withMessage('Password should have Minimal 8 char')
-    .customSanitizer(async (pass)=>{
-      const hash = await bcrypt.hash(pass, 10);
-      return hash;
-    })
-];
+const {rulesUsers} = require('./validator');
 
 users.get('/:id',userController.getDetailUser);
 users.get('/',userController.getAllUser);
-users.post('/', ...validatorCreate,validation,userController.createListUsers);
-users.patch('/:id',...validatorCreate,validation,userController.editListUsers);
+users.post('/', ...rulesUsers,validation,userController.createListUsers);
+users.patch('/:id',...rulesUsers,validation,userController.editListUsers);
 users.delete('/:id', userController.deleteListUsers);
 
 module.exports = users;
