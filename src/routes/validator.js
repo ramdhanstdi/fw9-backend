@@ -8,9 +8,6 @@ exports.rulesUsers = [
   body('username')
     .isLength({min:5}).withMessage('Username should have min 5char')
     .trim().escape(),
-  body('pin')
-    .isNumeric().withMessage('Input Only Number')
-    .isLength({min:6, max:6}).withMessage('Pin should only 6 digit'),
   body('password')
     .isLength({min:8}).withMessage('Password should have Minimal 8 char')
     .customSanitizer(async (pass)=>{
@@ -20,11 +17,8 @@ exports.rulesUsers = [
 ];
 
 exports.rulesProfile = [
-  body('user_id').optional({ checkFalsy: true }).escape().isInt().withMessage('Insert Only Number'),
   body('first_name').optional({ checkFalsy: true }).escape().isLength({min:1}).withMessage('First Name should not Empty'),
-  body('num_phone').optional({ checkFalsy: true }).escape().isMobilePhone(['id-ID']),
   body('last_name').optional({ checkFalsy: true }).escape(),
-  body('balance').optional({ checkFalsy: true }).escape()
 ];
 
 exports.rulesTransaction = [
@@ -46,3 +40,7 @@ exports.rulesPin = [
     .isLength({min:6, max:6}).withMessage('Pin should only 6 digit'),
   body('email')
     .isEmail().withMessage('Email Not Valid')];
+
+exports.rulesPhoneNum = [
+  body('num_phone').optional({ checkFalsy: true }).escape().isMobilePhone(['id-ID'])
+];
