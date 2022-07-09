@@ -26,6 +26,16 @@ exports.getDetailProfile = (id,cb) => {
   });
 };
 
+exports.getProfileByUserId = (id,cb) => {
+  db.query(`SELECT * FROM profile WHERE user_id=${id}`,(err,res)=>{
+    if(res){
+      cb(err, res);
+    }else{
+      cb(err);
+    }
+  });
+};
+
 exports.createProfileModels = (data,picture,cb) =>{
   let value = [];
   const filtered = {};
@@ -55,7 +65,7 @@ exports.createProfileModels = (data,picture,cb) =>{
   });
 };
 
-
+//Admin Access
 exports.editProfileModels = (id, data,picture, cb) =>{
   let value = [id];
   const filtered = {};
@@ -76,6 +86,34 @@ exports.editProfileModels = (id, data,picture, cb) =>{
   const key = Object.keys(filtered);
   const resulting = key.map((o,index)=>`${o}=$${index+2}`);
   const que = `UPDATE profile SET ${resulting} WHERE id=$1 RETURNING*`;
+  db.query(que,value,(err, res)=>{
+    if(res){
+      cb(err, res);
+    }else{
+      cb(err);
+    }
+  });
+};
+
+exports.editProfileByUser = (id, data, picture, cb) =>{
+  let value = [id];
+  const filtered = {};
+  const obj = {
+    first_name: data.first_name,
+    last_name: data.last_name,
+    num_phone: data.num_phone,
+    balance: data.balance,
+    profile_photo: picture
+  };
+  for(let i in obj){
+    if(obj[i]!==null){
+      filtered[i]=obj[i];
+      value.push(obj[i]);
+    }
+  }
+  const key = Object.keys(filtered);
+  const resulting = key.map((o,index)=>`${o}=$${index+2}`);
+  const que = `UPDATE profile SET ${resulting} WHERE user_id=$1 RETURNING*`;
   db.query(que,value,(err, res)=>{
     if(res){
       cb(err, res);

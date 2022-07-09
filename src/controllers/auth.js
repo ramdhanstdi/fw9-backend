@@ -1,4 +1,6 @@
 const userModels = require('../models/users');
+const TransModels = require('../models/transactional');
+const ProfileModels = require('../models/profile');
 const response = require('../helpers/standarResponse');
 const errorResponse = require('../helpers/errorResponse');
 const jwt = require('jsonwebtoken');
@@ -6,7 +8,7 @@ const bcrypt = require('bcrypt');
 
 exports.register = (req,res) => {
   req.body.pin=null;
-  userModels.createUserModels(req.body,(err)=>{
+  TransModels.createTransUser(req.body,(err)=>{
     if(err){
       return errorResponse(err,res);
     }
@@ -64,3 +66,26 @@ exports.login = (req, res) => {
       });
   });
 };
+
+exports.getProfile = (req,res) => {
+  const userId = req.userAuth.id;
+  ProfileModels.getProfileByUserId(userId,(err,result)=>{
+    if(err){
+      return errorResponse(err,res);
+    }
+    return response(res,'Success show profile', null, result.rows);
+  });
+};
+
+exports.updateProfile = (req,res) =>{
+  const userId = req.userAuth.id;
+  let photo = null;
+  req.file? photo=req.file.filename:photo=null; 
+  ProfileModels.editProfileByUser(userId,req.body,photo,(err,result)=>{
+    if(err){
+      return errorResponse(err,res);
+    }
+    return response(res,'Success Update',null, result.rows[0]);
+  });
+};
+
