@@ -27,7 +27,7 @@ exports.getDetailProfile = (id,cb) => {
 };
 
 exports.getProfileByUserId = (id,cb) => {
-  db.query(`SELECT * FROM profile WHERE user_id=${id}`,(err,res)=>{
+  db.query(`SELECT profile_photo,first_name,last_name,num_phone,balance FROM profile WHERE user_id=${id}`,(err,res)=>{
     if(res){
       cb(err, res);
     }else{
@@ -79,8 +79,10 @@ exports.editProfileModels = (id, data,picture, cb) =>{
   };
   for(let i in obj){
     if(obj[i]!==null){
-      filtered[i]=obj[i];
-      value.push(obj[i]);
+      if(obj[i]!==undefined){
+        filtered[i]=obj[i];
+        value.push(obj[i]);
+      }
     }
   }
   const key = Object.keys(filtered);
@@ -107,8 +109,10 @@ exports.editProfileByUser = (id, data, picture, cb) =>{
   };
   for(let i in obj){
     if(obj[i]!==null){
-      filtered[i]=obj[i];
-      value.push(obj[i]);
+      if(obj[i]!==undefined){
+        filtered[i]=obj[i];
+        value.push(obj[i]);
+      }
     }
   }
   const key = Object.keys(filtered);
