@@ -26,11 +26,14 @@ exports.createTransUser = (data,cb) =>{
   });
 };
 
-exports.creataTransProfile = (data,cb)=>{
-  const q ='INSERT INTO profile (user_id) VALUES ($1) RETURNING*';
-  const val= [data.id];
-  db.query(q,val,(err,res)=>{
-    console.log(err);
-    cb(err,res);
+exports.createTransaction = (sender,data,cb)=>{
+  const que = 'INSERT INTO transaction (sender_id,receiver_id,transfertype,amount,time_transfer,notes) VALUES ($1,$2,$3,$4,$5,$6) RETURNING*';
+  const value = [sender,data.receiver,data.typeTransaction,data.amount,data.time,data.notes];
+  db.query(que,value,(err,res)=>{
+    if(res){
+      cb(err,res);
+    }else{
+      cb(err);
+    }
   });
 };

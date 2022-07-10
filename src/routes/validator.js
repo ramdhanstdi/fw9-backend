@@ -22,11 +22,10 @@ exports.rulesProfile = [
 ];
 
 exports.rulesTransaction = [
-  body('receiver_id').isLength({min:1}).withMessage('Receiver can\'t be empty'),
+  body('receiver').isLength({min:1}).withMessage('Receiver can\'t be empty'),
   body('amount').isInt({min:1}).withMessage('Input only positive number')
     .isLength({min:1}).withMessage('Amount can\'t be empty'),
-  body('transfertype').isLength({min:1}).withMessage('Transfer type can\'t be empty'),
-  body('time_transfer').isISO8601().withMessage('Time Transfer in Valid')
+  body('time').isISO8601().withMessage('Time Transfer in Valid')
 ];
 
 exports.rulesTypeTransaction = [
@@ -42,5 +41,21 @@ exports.rulesPin = [
     .isEmail().withMessage('Email Not Valid')];
 
 exports.rulesPhoneNum = [
-  body('num_phone').optional({ checkFalsy: true }).escape().isMobilePhone(['id-ID'])
+  body('num_phone').isMobilePhone(['id-ID'])
+];
+
+exports.rulesChangePin = [
+  body('oldPin')
+    .isNumeric().withMessage('Input Only Number')
+    .isLength({min:6, max:6}).withMessage('Pin should only 6 digit'),
+  body('newPin')
+    .isNumeric().withMessage('Input Only Number')
+    .isLength({min:6, max:6}).withMessage('Pin should only 6 digit')
+];
+
+exports.rulesChangePass = [
+  body('newPass')
+    .isLength({min:8}).withMessage('Password should have Minimal 8 char'),
+  body('confirmPass')
+    .isLength({min:8}).withMessage('Password should have Minimal 8 char')
 ];
