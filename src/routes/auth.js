@@ -13,6 +13,7 @@ auth.post('/login',controlAuth.login);
 
 //User was Login
 auth.get('/profile',authorization,controlAuth.getProfile);
+auth.get('/historyTransaction',authorization,controlAuth.historyTransaction);
 auth.post('/number',authorization,...rulesPhoneNum,validation,controlAuth.insertPhoneNum);
 auth.post('/transfer',authorization,...rulesTransaction,validation,controlAuth.transferToOthers);
 auth.patch('/profile',authorization,uploadPhoto,...rulesProfile,validation,controlAuth.updateProfile);

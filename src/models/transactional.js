@@ -1,4 +1,5 @@
 const db = require('../helpers/db');
+const {LIMIT_DATA} = process.env;
 
 exports.createTransUser = (data,cb) =>{
   db.query('BEGIN', err=>{
@@ -34,6 +35,57 @@ exports.createTransaction = (sender,data,cb)=>{
       cb(err,res);
     }else{
       cb(err);
+    }
+  });
+}; 
+
+exports.historyTransaction = (id,searchBy,keyword,orderBy,order,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
+  const que = `SELECT * FROM transaction WHERE receiver_id=${id} OR sender_id=${id} AND ${searchBy} LIKE '%${keyword}%' ORDER BY ${orderBy} ${order} LIMIT $1 OFFSET $2`;
+  const value = [limit,offset];
+  db.query(que,value,(err,res)=>{
+    if(res){
+      console.log(res);
+      cb(err,res);
+    }else{
+      cb(err);
+    }
+  });
+};
+
+exports.countHistory = (id, searchBy, keyword, cb) =>{
+  const que = `SELECT * FROM transaction WHERE receiver_id=${id} OR sender_id=${id} AND ${searchBy} LIKE '%${keyword}%'`;
+  db.query(que,(err,res)=>{
+    cb(err,res.rowCount);
+  });
+};
+
+exports.transferToOthers = (id,data,cb) =>{
+  db.query('BEGIN',err=>{
+    if(err){
+      cb(err);
+    }else{
+      const amount = parseInt(data.amount);
+      data.typeTransaction = 'Transfer';
+      db.query(`UPDATE profile SET balance = balance - ${amount} WHERE user_id=${id}`,err=>{
+        if(err){
+          cb(err);
+        }else{
+          const que = ('INSERT INTO transaction (sender_id,receiver_id,transfertype,amount,time_transfer,notes) VALUES ($1,$2,$3,$4,$5,$6) RETURNING*');
+          const val = [id,data.receiver,data.typeTransaction,data.amount,data.time,data.notes];
+          db.query(que,val,(err,result)=>{
+            if (err) {
+              cb(err);
+            }else{
+              cb(err,result);
+              db.query(`UPDATE profile SET balance = balance + ${amount} WHERE user_id=${data.receiver}`,err=>{
+                if(err){
+                  cb(err);
+                }
+              });
+            }
+          });
+        }
+      });
     }
   });
 };

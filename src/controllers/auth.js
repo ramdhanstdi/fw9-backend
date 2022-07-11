@@ -5,6 +5,7 @@ const response = require('../helpers/standarResponse');
 const errorResponse = require('../helpers/errorResponse');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const {LIMIT_DATA} = process.env;
 
 exports.register = (req,res) => {
   req.body.pin=null;
@@ -157,44 +158,72 @@ exports.changePass = (req,res) => {
 
 exports.transferToOthers = (req,res) => {
   const senderid = req.userAuth.id;
-  ProfileModels.getProfileByUserId(senderid,(err,result)=>{
+  TransModels.transferToOthers(senderid,req.body,(err,result)=>{
     if (err) {
       return errorResponse(err,res);
     }
-    const profile = result.rows[0];
-    Number(profile.balance);
-    const amount = parseInt(req.body.amount);
-    profile.balance = profile.balance - amount;
-    req.body.typeTransaction='Transfer';
-    const photo = null;
-    ProfileModels.editProfileByUser(senderid,profile,photo,err=>{
-      if(err){
-        return errorResponse(err,res);
-      }
-      TransModels.createTransaction(senderid,req.body,(err,resultTrans)=>{
-        if(err){
-          return errorResponse(err,res);
-        }
-        const receiverid = resultTrans.rows[0].receiver_id;
-        ProfileModels.getProfileByUserId(receiverid,(err,result)=>{
-          if(err){
-            return errorResponse(err,res);
-          }
-          const profile = result.rows[0];
-          if(profile.balance===null){
-            profile.balance = 0;
-          }
-          let balance = parseInt(profile.balance);
-          profile.balance = balance + amount;
-          ProfileModels.editProfileByUser(receiverid,profile,photo,err=>{
-            if(err){
-              console.log(err); 
-              return errorResponse(err,res);
-            }
-            return response(res,'Transfer Succes', null, resultTrans.rows[0]);
-          });
-        });
-      });
+    return response(res,'Transfer Success',null,result.rows[0]);
+  });
+};
+
+exports.historyTransaction = (req,res) => {
+  const id = req.userAuth.id;
+  const {searchBy='notes',search='',sortBy='time_transfer',sort='ASC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
+  console.log(limit);
+  TransModels.historyTransaction(id,searchBy,search,sortBy,sort,limit,page,(err,result)=>{
+    if(err){
+      console.log(err);
+      return errorResponse(err,res);
+    }
+    const pageInfo = {};
+    TransModels.countHistory(id,searchBy,search,(err,totalusers)=>{
+      pageInfo.totalData = totalusers;
+      pageInfo.totalPage = Math.ceil(totalusers/limit);
+      pageInfo.curretPage = parseInt(page);
+      pageInfo.nextPage = pageInfo.curretPage < pageInfo.totalPage? pageInfo.curretPage+1:null;
+      pageInfo.prevPage = pageInfo.curretPage > 1 ? pageInfo.curretPage-1:null;
+      return response(res,'Showing History', pageInfo, result.rows);
     });
   });
 };
+
+// ProfileModels.getProfileByUserId(senderid,(err,result)=>{
+//   if (err) {
+//     return errorResponse(err,res);
+//   }
+//   const profile = result.rows[0];
+//   Number(profile.balance);
+//   const amount = parseInt(req.body.amount);
+//   profile.balance = profile.balance - amount;
+//   req.body.typeTransaction='Transfer';
+//   const photo = null;
+//   ProfileModels.editProfileByUser(senderid,profile,photo,err=>{
+//     if(err){
+//       return errorResponse(err,res);
+//     }
+//     TransModels.createTransaction(senderid,req.body,(err,resultTrans)=>{
+//       if(err){
+//         return errorResponse(err,res);
+//       }
+//       const receiverid = resultTrans.rows[0].receiver_id;
+//       ProfileModels.getProfileByUserId(receiverid,(err,result)=>{
+//         if(err){
+//           return errorResponse(err,res);
+//         }
+//         const profile = result.rows[0];
+//         if(profile.balance===null){
+//           profile.balance = 0;
+//         }
+//         let balance = parseInt(profile.balance);
+//         profile.balance = balance + amount;
+//         ProfileModels.editProfileByUser(receiverid,profile,photo,err=>{
+//           if(err){
+//             console.log(err); 
+//             return errorResponse(err,res);
+//           }
+//           return response(res,'Transfer Succes', null, resultTrans.rows[0]);
+//         });
+//       });
+//     });
+//   });
+// });
