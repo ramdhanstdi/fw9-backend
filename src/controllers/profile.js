@@ -45,10 +45,10 @@ exports.getDetailProfile = (req,res)=>{
 //Create Profile
 exports.createListProfile = (req, res) =>{
   let photo = null;
-  req.file===null? null:photo=req.file.filename;
+  console.log(req.file);
+  req.file===undefined? photo=null:photo=req.file.filename;
   createProfileModels(req.body,photo,(err, result) =>{
     if(err){
-      console.log(err);
       return errorResponse(err, res);
     }
     return response(res,'Create Profile Success',null,result[0]);

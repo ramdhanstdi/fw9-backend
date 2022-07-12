@@ -45,7 +45,7 @@ exports.createListUsers = (req, res) =>{
     if(err){
       return errorResponse(err,res);
     }else{
-      return response(res,'Create Users Success', null,result);
+      return response(res,'Create Users Success', null,result.rows[0]);
     }
   });
 };
