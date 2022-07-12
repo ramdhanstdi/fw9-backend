@@ -30,7 +30,6 @@ exports.getUserByEmail = (email,cb) => {
   const que ='SELECT * FROM users WHERE email=$1';
   const value = [email];
   db.query(que,value,(err,res)=>{
-    console.log(err);
     if(res){
       cb(err, res);
     }else{

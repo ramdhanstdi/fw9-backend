@@ -44,7 +44,6 @@ exports.historyTransaction = (id,searchBy,keyword,orderBy,order,limit=parseInt(L
   const value = [limit,offset];
   db.query(que,value,(err,res)=>{
     if(res){
-      console.log(res);
       cb(err,res);
     }else{
       cb(err);
@@ -80,6 +79,41 @@ exports.transferToOthers = (id,data,cb) =>{
               db.query(`UPDATE profile SET balance = balance + ${amount} WHERE user_id=${data.receiver}`,err=>{
                 if(err){
                   cb(err);
+                }db.query('COMMIT',err=>{
+                  if (err) {
+                    cb(err);
+                  }
+                });
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
+exports.topUp=(id,data,cb) =>{
+  db.query('BEGIN',err=>{
+    if(err){
+      cb(err);
+    }else{
+      data.typeTransaction = 'Top Up';
+      const amount = parseInt(data.amount);
+      db.query(`UPDATE profile SET balance = balance + ${amount} WHERE user_id=${id}`,err=>{
+        if(err){
+          cb(err);
+        }else{
+          const que = ('INSERT INTO transaction (receiver_id,transfertype,amount,time_transfer,notes) VALUES ($1,$2,$3,$4,$5) RETURNING receiver_id,transfertype,amount,time_transfer,notes');
+          const val = [id,data.typeTransaction,amount,data.time,data.notes];
+          db.query(que,val,(err,result)=>{
+            if(err){
+              cb(err);
+            }else{
+              cb(err,result);
+              db.query('COMMIT',err=>{
+                if (err) {
+                  cb(err);                  
                 }
               });
             }

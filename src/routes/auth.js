@@ -17,8 +17,9 @@ auth.get('/historyTransaction',authorization,controlAuth.historyTransaction);
 auth.post('/number',authorization,...rulesPhoneNum,validation,controlAuth.insertPhoneNum);
 auth.post('/transfer',authorization,...rulesTransaction,validation,controlAuth.transferToOthers);
 auth.patch('/profile',authorization,uploadPhoto,...rulesProfile,validation,controlAuth.updateProfile);
-auth.patch('/number',authorization,...rulesPhoneNum,validation,controlAuth.insertPhoneNum);
+auth.patch('/number',authorization,...rulesPhoneNum,validation,controlAuth.updateNumber);
 auth.patch('/changePin',authorization,...rulesChangePin,validation,controlAuth.changePin);
 auth.patch('/changePassword',authorization,...rulesChangePass,validation,controlAuth.changePass);
+auth.patch('/topUp',authorization,controlAuth.topUpUsers);
 
 module.exports = auth;

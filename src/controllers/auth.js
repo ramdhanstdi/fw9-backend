@@ -93,33 +93,49 @@ exports.updateProfile = (req,res) =>{
 exports.insertPhoneNum = (req,res) => {
   const userId = req.userAuth.id;
   const photo = null;
-  ProfileModels.editProfileByUser(userId,req.body,photo,(err,result)=>{
+  ProfileModels.getProfileByUserId(userId,(err,result)=>{
     if(err){
       return errorResponse(err,res);
+    }else{
+      const profile = result.rows[0];
+      if(profile.num_phone===null){
+        ProfileModels.editProfileByUser(userId,req.body,photo,(err,result)=>{
+          if(err){
+            return errorResponse(err,res);
+          }
+          return response(res,'Success Update',null, result.rows[0]);
+        });
+      }else{
+        return response(res,'Number phone already added',null,null,400);
+      }
     }
-    return response(res,'Success Update',null, result.rows[0]);
   });
 };
 
 exports.changePin = (req,res) => {
   const id = req.userAuth.id;
+  const {oldPin,newPin,confirmPin} = req.body;
   userModels.getDetailUser(id,(err,result)=>{
     if(err){
       return errorResponse(err,res);
     }
     const user = result.rows[0];
-    const pin = req.body.oldPin;
-    if(user.pin===pin){
-      const newUser = user;
-      newUser.pin = req.body.newPin;
-      userModels.editUserModels(id,newUser,(err)=>{
-        if(err){
-          return errorResponse(err,res);
-        }
-        return response(res, 'Pin Updated');
-      });
+    if(user.pin===oldPin){
+      if(newPin===confirmPin){
+        const newUser = user;
+        newUser.pin = newPin;
+        userModels.editUserModels(id,newUser,(err)=>{
+          if(err){
+            return errorResponse(err,res);
+          }
+          return response(res, 'Pin Updated');
+        });
+      }else{
+        return response(res,'Confim Pin not match',null,null,400);
+      }
+    }else{
+      return response(res, 'Wrong Pin',null,null,400);
     }
-    return response(res, 'Wrong Pin',null,null,400);
   });
 };
 
@@ -147,8 +163,9 @@ exports.changePass = (req,res) => {
           }else{
             return response(res,'Confirm new password does not match', null, null, 400);
           }
+        }else{
+          return response(res,'Wrong Password',null,null,400);
         }
-        return response(res,'Wrong Password',null,null,400);
       })
       .catch(()=>{
         return response(res,'Wrong Password',null,null,400);
@@ -158,19 +175,43 @@ exports.changePass = (req,res) => {
 
 exports.transferToOthers = (req,res) => {
   const senderid = req.userAuth.id;
-  TransModels.transferToOthers(senderid,req.body,(err,result)=>{
-    if (err) {
+  userModels.getDetailUser(senderid,(err,result)=>{
+    if(err){
       return errorResponse(err,res);
+    }else{
+      const user = result.rows[0];
+      ProfileModels.getProfileByUserId(senderid,(err,resultProfile)=>{
+        if (err) {
+          return errorResponse(err,res);
+        }else{
+          const profile = resultProfile.rows[0];
+          const amount = parseInt(req.body.amount); 
+          const balance = parseInt(profile.balance); 
+          if(amount > balance){
+            return response(res,'Balance not enough',null, null,400);
+          }else{
+            if(user.pin===req.body.pin){
+              TransModels.transferToOthers(senderid,req.body,(err,result)=>{
+                if (err) {
+                  return errorResponse(err,res);
+                }
+                return response(res,`Transfer Success, Balance left is ${balance - amount}`,null,result.rows[0]);
+              });
+            }else{
+              return response(res,'Wrong Pin',null, null,400);
+            }
+          }
+        }
+      });
     }
-    return response(res,'Transfer Success',null,result.rows[0]);
   });
 };
 
 exports.historyTransaction = (req,res) => {
   const id = req.userAuth.id;
   const {searchBy='notes',search='',sortBy='time_transfer',sort='ASC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
-  console.log(limit);
-  TransModels.historyTransaction(id,searchBy,search,sortBy,sort,limit,page,(err,result)=>{
+  const offset = (page-1) * limit;
+  TransModels.historyTransaction(id,searchBy,search,sortBy,sort,limit,offset,(err,result)=>{
     if(err){
       console.log(err);
       return errorResponse(err,res);
@@ -187,43 +228,34 @@ exports.historyTransaction = (req,res) => {
   });
 };
 
-// ProfileModels.getProfileByUserId(senderid,(err,result)=>{
-//   if (err) {
-//     return errorResponse(err,res);
-//   }
-//   const profile = result.rows[0];
-//   Number(profile.balance);
-//   const amount = parseInt(req.body.amount);
-//   profile.balance = profile.balance - amount;
-//   req.body.typeTransaction='Transfer';
-//   const photo = null;
-//   ProfileModels.editProfileByUser(senderid,profile,photo,err=>{
-//     if(err){
-//       return errorResponse(err,res);
-//     }
-//     TransModels.createTransaction(senderid,req.body,(err,resultTrans)=>{
-//       if(err){
-//         return errorResponse(err,res);
-//       }
-//       const receiverid = resultTrans.rows[0].receiver_id;
-//       ProfileModels.getProfileByUserId(receiverid,(err,result)=>{
-//         if(err){
-//           return errorResponse(err,res);
-//         }
-//         const profile = result.rows[0];
-//         if(profile.balance===null){
-//           profile.balance = 0;
-//         }
-//         let balance = parseInt(profile.balance);
-//         profile.balance = balance + amount;
-//         ProfileModels.editProfileByUser(receiverid,profile,photo,err=>{
-//           if(err){
-//             console.log(err); 
-//             return errorResponse(err,res);
-//           }
-//           return response(res,'Transfer Succes', null, resultTrans.rows[0]);
-//         });
-//       });
-//     });
-//   });
-// });
+exports.topUpUsers = (req,res) =>{
+  const id = req.userAuth.id;
+  TransModels.topUp(id,req.body,(err,result)=>{
+    if(err){
+      return errorResponse(err,res);
+    }
+    return response(res,'Top Up Success',null,result.rows[0]);
+  });
+};
+
+exports.updateNumber = (req,res) =>{
+  const userId = req.userAuth.id;
+  const photo = null;
+  ProfileModels.getProfileByUserId(userId,(err,result)=>{
+    if(err){
+      return errorResponse(err,res);
+    }else{
+      const profile = result.rows[0];
+      if(profile.num_phone===null){
+        return response(res,'Add Number First',null,null,400);
+      }else{
+        ProfileModels.editProfileByUser(userId,req.body,photo,(err,result)=>{
+          if(err){
+            return errorResponse(err,res);
+          }
+          return response(res,'Success Updated Number',null, result.rows[0]);
+        });
+      }
+    }
+  });
+};
