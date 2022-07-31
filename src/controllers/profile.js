@@ -8,7 +8,12 @@ exports.getListProfile = (req, res) =>{
   const {searchBy='first_name',search='',method='ASC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
   const offset = (page-1) * limit;
 
+  console.log(req.query);
   ListProfileModels(searchBy,search,method,limit,offset, (err, result)=>{
+    console.log(err);
+    if(err){
+      return errorResponse (err,res);
+    }
     if(result.rows.length<1){      
       return res.redirect('/404');
     }
