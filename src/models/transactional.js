@@ -3,18 +3,23 @@ const {LIMIT_DATA} = process.env;
 
 exports.createTransUser = (data,cb) =>{
   db.query('BEGIN', err=>{
-    if(err)console.log(err);
+    if(err){
+      console.log(err);
+      cb(err);}
     else{
       const queryUser = 'INSERT INTO users (username, email, password, pin) VALUES ($1, $2, $3, $4) RETURNING*';
       const valUser = [data.username, data.email, data.password, data.pin];
       db.query(queryUser,valUser,(err,res)=>{
-        if(err){console.log(err);
-        }else{
+        if(err){
+          console.log(err);
+          cb(err);}
+        else{
           const queryProfile = 'INSERT INTO profile (user_id) VALUES ($1)';
           const valProfile = [res.rows[0].id];
           db.query(queryProfile,valProfile,(err,res)=>{
-            if(err){console.log();
-            }else{
+            if(err){
+              console.log(err);
+              cb(err);}else{
               cb(err,res);
               db.query('COMMIT',err=>{
                 if (err)console.log(err);
@@ -40,9 +45,10 @@ exports.createTransaction = (sender,data,cb)=>{
 }; 
 
 exports.historyTransaction = (id,searchBy,keyword,orderBy,order,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
-  const que = `SELECT * FROM transaction WHERE receiver_id=${id} OR sender_id=${id} AND ${searchBy} LIKE '%${keyword}%' ORDER BY ${orderBy} ${order} LIMIT $1 OFFSET $2`;
+  const que = `SELECT * FROM transaction JOIN profile ON profile.user_id=receiver_id OR profile.user_id=sender_id WHERE receiver_id=${id} OR sender_id=${id} AND ${searchBy} LIKE '%${keyword}%' ORDER BY ${orderBy} ${order} LIMIT $1 OFFSET $2`;
   const value = [limit,offset];
   db.query(que,value,(err,res)=>{
+    console.log(res);
     if(res){
       cb(err,res);
     }else{

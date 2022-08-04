@@ -5,7 +5,7 @@ const {LIMIT_DATA} = process.env;
 
 //Access Profile
 exports.getListProfile = (req, res) =>{
-  const {searchBy='first_name',search='',method='ASC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
+  const {searchBy='num_phone',search='',method='ASC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
   const offset = (page-1) * limit;
 
   console.log(req.query);
