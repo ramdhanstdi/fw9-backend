@@ -81,7 +81,7 @@ exports.getProfile = (req,res) => {
 exports.updateProfile = (req,res) =>{
   const userId = req.userAuth.id;
   let photo = null;
-  req.file? photo=req.file.filename:photo=null; 
+  req.file? photo=req.file.path:photo=null; 
   ProfileModels.editProfileByUser(userId,req.body,photo,(err,result)=>{
     if(err){
       return errorResponse(err,res);

@@ -1,16 +1,18 @@
 const multer = require('multer');
-const path = require('path');
+const {CloudinaryStorage} = require('multer-storage-cloudinary');
+const cloudinary = require('./cloudinary');
 const {MAX_SIZE} = process.env;
 
 //destination to saved uploaded file
-const storage = multer.diskStorage({
-  destination : (req, file, cb) => {
-    cb(null, path.join(global.__basepath, 'assets', 'uploadProfile'));
-  },
-  filename : (req, file, cb) => {
-    const timestamp = new Date().getTime();
-    const ext = file.mimetype.split('/')[1];
-    cb(null, `${timestamp}.${ext}`);
+const storage = new CloudinaryStorage({
+  cloudinary:cloudinary,
+  params:{
+    folder:'stdiwallet',
+    format: async(req,file)=>{
+      const ext = file.mimetype.split('/')[1];
+      return ext;
+    },
+    public_id: (req,file) => new Date().getTime()
   }
 });
 
