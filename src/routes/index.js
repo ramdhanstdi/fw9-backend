@@ -19,5 +19,6 @@ router.use('/authentication',auth,(req,res)=>{
 
 //Router Users
 router.use('/',require('./auth'));
+router.use('/',require('./tokendevice'));
 router.use('/auth',require('./auth'));
 module.exports = router;

@@ -27,7 +27,7 @@ exports.getDetailProfile = (id,cb) => {
 };
 
 exports.getProfileByUserId = (id,cb) => {
-  db.query(`SELECT profile_photo,first_name,last_name,num_phone,balance FROM profile WHERE user_id=${id}`,(err,res)=>{
+  db.query(`SELECT profile_photo,first_name,last_name,num_phone,balance,users.email FROM profile JOIN users ON users.id=profile.user_id WHERE user_id=${id}`,(err,res)=>{
     if(res){
       cb(err, res);
     }else{

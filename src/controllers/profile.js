@@ -8,13 +8,11 @@ exports.getListProfile = (req, res) =>{
   const {searchBy='num_phone',search='',method='ASC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
   const offset = (page-1) * limit;
 
-  console.log(req.query);
   ListProfileModels(searchBy,search,method,limit,offset, (err, result)=>{
-    console.log(err);
     if(err){
       return errorResponse (err,res);
     }
-    if(result.rows.length<1){      
+    if(result.rowCount<1){      
       return res.redirect('/404');
     }
     const pageInfo = {};
@@ -33,7 +31,6 @@ exports.getDetailProfile = (req,res)=>{
   const getId = req.params.id;  
   if(getId){
     getDetailProfile(getId,(err,result)=>{
-      console.log(result);
       if(err){
         return errorResponse(err,res);
       }
@@ -50,7 +47,6 @@ exports.getDetailProfile = (req,res)=>{
 //Create Profile
 exports.createListProfile = (req, res) =>{
   let photo = null;
-  console.log(req.file);
   req.file===undefined? photo=null:photo=req.file.filename;
   createProfileModels(req.body,photo,(err, result) =>{
     if(err){

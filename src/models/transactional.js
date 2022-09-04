@@ -45,10 +45,9 @@ exports.createTransaction = (sender,data,cb)=>{
 }; 
 
 exports.historyTransaction = (id,searchBy,keyword,orderBy,order,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
-  const que = `SELECT * FROM transaction JOIN profile ON profile.user_id=receiver_id OR profile.user_id=sender_id WHERE receiver_id=${id} OR sender_id=${id} AND ${searchBy} LIKE '%${keyword}%' ORDER BY ${orderBy} ${order} LIMIT $1 OFFSET $2`;
+  const que = `SELECT transaction.id,transaction.receiver_id,transaction.sender_id,profile.first_name,profile.last_name,transaction.amount,transaction.notes,transaction.time_transfer,transaction.transfertype,profile.profile_photo,profile.num_phone,profile.user_id FROM transaction INNER JOIN profile ON profile.user_id=receiver_id OR profile.user_id=sender_id WHERE user_id=${id} AND ${searchBy} LIKE '%${keyword}%' ORDER BY ${orderBy} ${order} LIMIT $1 OFFSET $2`;
   const value = [limit,offset];
   db.query(que,value,(err,res)=>{
-    console.log(res);
     if(res){
       cb(err,res);
     }else{

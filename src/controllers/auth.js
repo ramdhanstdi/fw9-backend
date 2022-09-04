@@ -3,6 +3,7 @@ const TransModels = require('../models/transactional');
 const ProfileModels = require('../models/profile');
 const response = require('../helpers/standarResponse');
 const errorResponse = require('../helpers/errorResponse');
+const sendMessage = require('../helpers/firebase');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {LIMIT_DATA} = process.env;
@@ -54,11 +55,12 @@ exports.login = (req, res) => {
       return response(res,'Email or Password is wrong',null,null,400);
     }
     const user = result.rows[0];
+    const id = user.id;
     bcrypt.compare(password,user.password)
       .then((comp)=>{
         if(comp){
           const token = jwt.sign({id: user.id},process.env.APP_KEY||'secret');
-          return response(res,'Login Succes', null, token);
+          return response(res,'Login Succes', null, {id,token});
         }
         return response(res,'Email or Password is wrong',null,null,400);
       })
@@ -74,7 +76,7 @@ exports.getProfile = (req,res) => {
     if(err){
       return errorResponse(err,res);
     }
-    return response(res,'Success show profile', null, result.rows);
+    return response(res,'Success show profile', null, result.rows[0]);
   });
 };
 
@@ -114,25 +116,21 @@ exports.insertPhoneNum = (req,res) => {
 
 exports.changePin = (req,res) => {
   const id = req.userAuth.id;
-  const {oldPin,newPin,confirmPin} = req.body;
+  const {oldPin,newPin} = req.body;
   userModels.getDetailUser(id,(err,result)=>{
     if(err){
       return errorResponse(err,res);
     }
     const user = result.rows[0];
     if(user.pin===oldPin){
-      if(newPin===confirmPin){
-        const newUser = user;
-        newUser.pin = newPin;
-        userModels.editUserModels(id,newUser,(err)=>{
-          if(err){
-            return errorResponse(err,res);
-          }
-          return response(res, 'Pin Updated');
-        });
-      }else{
-        return response(res,'Confim Pin not match',null,null,400);
-      }
+      const newUser = user;
+      newUser.pin = newPin;
+      userModels.editUserModels(id,newUser,(err)=>{
+        if(err){
+          return errorResponse(err,res);
+        }
+        return response(res, 'Pin Updated');
+      });
     }else{
       return response(res, 'Wrong Pin',null,null,400);
     }
@@ -195,6 +193,7 @@ exports.transferToOthers = (req,res) => {
                 if (err) {
                   return errorResponse(err,res);
                 }
+                sendMessage(req.body.receiverToken,req.body.msg);
                 return response(res,`Transfer Success, Balance left is ${balance - amount}`,null,result.rows[0]);
               });
             }else{
@@ -213,7 +212,6 @@ exports.historyTransaction = (req,res) => {
   const offset = (page-1) * limit;
   TransModels.historyTransaction(id,searchBy,search,sortBy,sort,limit,offset,(err,result)=>{
     if(err){
-      console.log(err);
       return errorResponse(err,res);
     }
     const pageInfo = {};
