@@ -13,7 +13,7 @@ exports.saveTokenModel = (data, cb) => {
 };
 
 exports.getTokenModel = (id,cb) => {
-  const que = `SELECT * FROM token WHERE user_id=${id}`;
+  const que = `SELECT * FROM token WHERE user_id=${id} ORDER BY id DESC`;
   db.query(que,(err,res)=>{
     if(err){
       cb(err);
