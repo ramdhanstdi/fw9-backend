@@ -208,14 +208,14 @@ exports.transferToOthers = (req,res) => {
 
 exports.historyTransaction = (req,res) => {
   const id = req.userAuth.id;
-  const {searchBy='notes',search='',sortBy='time_transfer',sort='DESC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
+  const {sortBy='time_transfer',sort='DESC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
   const offset = (page-1) * limit;
-  TransModels.historyTransaction(id,searchBy,search,sortBy,sort,limit,offset,(err,result)=>{
+  TransModels.historyTransaction(id,sortBy,sort,limit,offset,(err,result)=>{
     if(err){
       return errorResponse(err,res);
     }
     const pageInfo = {};
-    TransModels.countHistory(id,searchBy,search,(err,totalusers)=>{
+    TransModels.countHistory(id,(err,totalusers)=>{
       pageInfo.totalData = totalusers;
       pageInfo.totalPage = Math.ceil(totalusers/limit);
       pageInfo.curretPage = parseInt(page);

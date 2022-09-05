@@ -44,8 +44,8 @@ exports.createTransaction = (sender,data,cb)=>{
   });
 }; 
 
-exports.historyTransaction = (id,searchBy,keyword,orderBy,order,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
-  const que = `SELECT transaction.id,transaction.receiver_id,transaction.sender_id,profile.first_name,profile.last_name,transaction.amount,transaction.notes,transaction.time_transfer,transaction.transfertype,profile.profile_photo,profile.num_phone,profile.user_id FROM transaction INNER JOIN profile ON profile.user_id=receiver_id OR profile.user_id=sender_id WHERE user_id=${id} AND ${searchBy} LIKE '%${keyword}%' ORDER BY ${orderBy} ${order} LIMIT $1 OFFSET $2`;
+exports.historyTransaction = (id,orderBy,order,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
+  const que = `SELECT transaction.id, transaction.sender_id, transaction.receiver_id, transaction.amount,transaction.transfertype, transaction.notes, transaction.time_transfer, sender.first_name, sender.last_name,sender.user_id, receiver.first_name, receiver.last_name, receiver.user_id FROM transaction FULL OUTER JOIN profile sender ON sender.user_id = transaction.sender_id FULL OUTER JOIN profile receiver ON receiver.user_id = transaction.receiver_id WHERE transaction.sender_id=${id} OR transaction.receiver_id=${id} ORDER BY ${orderBy} ${order} LIMIT $1 OFFSET $2`;
   const value = [limit,offset];
   db.query(que,value,(err,res)=>{
     if(res){
@@ -56,8 +56,8 @@ exports.historyTransaction = (id,searchBy,keyword,orderBy,order,limit=parseInt(L
   });
 };
 
-exports.countHistory = (id, searchBy, keyword, cb) =>{
-  const que = `SELECT * FROM transaction WHERE receiver_id=${id} OR sender_id=${id} AND ${searchBy} LIKE '%${keyword}%'`;
+exports.countHistory = (id, cb) =>{
+  const que = `SELECT * FROM transaction WHERE receiver_id=${id} OR sender_id=${id}`;
   db.query(que,(err,res)=>{
     cb(err,res.rowCount);
   });
