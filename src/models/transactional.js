@@ -45,7 +45,7 @@ exports.createTransaction = (sender,data,cb)=>{
 }; 
 
 exports.historyTransaction = (id,orderBy,order,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
-  const que = `SELECT transaction.id, transaction.sender_id, transaction.receiver_id, transaction.amount,transaction.transfertype, transaction.notes, transaction.time_transfer, sender.first_name, sender.last_name,sender.user_id, receiver.first_name, receiver.last_name, receiver.user_id FROM transaction FULL OUTER JOIN profile sender ON sender.user_id = transaction.sender_id FULL OUTER JOIN profile receiver ON receiver.user_id = transaction.receiver_id WHERE transaction.sender_id=${id} OR transaction.receiver_id=${id} ORDER BY ${orderBy} ${order} LIMIT $1 OFFSET $2`;
+  const que = `SELECT transaction.id, transaction.sender_id, transaction.receiver_id, transaction.amount,transaction.transfertype, transaction.notes, transaction.time_transfer, sender.first_name, sender.profile_photo, sender.last_name,sender.user_id, receiver.first_name, receiver.last_name, receiver.profile_photo, receiver.user_id FROM transaction FULL OUTER JOIN profile sender ON sender.user_id = transaction.sender_id FULL OUTER JOIN profile receiver ON receiver.user_id = transaction.receiver_id WHERE transaction.sender_id=${id} OR transaction.receiver_id=${id} ORDER BY ${orderBy} ${order} LIMIT $1 OFFSET $2`;
   const value = [limit,offset];
   db.query(que,value,(err,res)=>{
     if(res){
