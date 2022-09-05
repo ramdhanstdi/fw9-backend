@@ -239,21 +239,16 @@ exports.topUpUsers = (req,res) =>{
 exports.updateNumber = (req,res) =>{
   const userId = req.userAuth.id;
   const photo = null;
-  ProfileModels.getProfileByUserId(userId,(err,result)=>{
+  ProfileModels.getProfileByUserId(userId,(err)=>{
     if(err){
       return errorResponse(err,res);
     }else{
-      const profile = result.rows[0];
-      if(profile.num_phone===null){
-        return response(res,'Add Number First',null,null,400);
-      }else{
-        ProfileModels.editProfileByUser(userId,req.body,photo,(err,result)=>{
-          if(err){
-            return errorResponse(err,res);
-          }
-          return response(res,'Success Updated Number',null, result.rows[0]);
-        });
-      }
+      ProfileModels.editProfileByUser(userId,req.body,photo,(err,result)=>{
+        if(err){
+          return errorResponse(err,res);
+        }
+        return response(res,'Success Updated Number',null, result.rows[0]);
+      });
     }
   });
 };
