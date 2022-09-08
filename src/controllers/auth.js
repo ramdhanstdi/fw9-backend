@@ -59,7 +59,7 @@ exports.login = (req, res) => {
     bcrypt.compare(password,user.password)
       .then((comp)=>{
         if(comp){
-          const token = jwt.sign({id: user.id},process.env.APP_KEY||'secret');
+          const token = jwt.sign({id: user.id},process.env.APP_KEY||'secret',{expiresIn: '60s'});
           return response(res,'Login Succes', null, {id,token});
         }
         return response(res,'Email or Password is wrong',null,null,400);
