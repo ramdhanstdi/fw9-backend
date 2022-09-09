@@ -2,7 +2,7 @@ const db = require('../helpers/db');
 const {LIMIT_DATA} = process.env;
 
 exports.ListProfileModels = (searchBy, keyword,method,limit=parseInt(LIMIT_DATA), offset=0,cb) => {
-  const que = `SELECT * FROM profile WHERE ${searchBy} LIKE '%${keyword}%' ORDER BY id ${method} LIMIT $1 OFFSET $2`;
+  const que = `SELECT * FROM profile WHERE num_phone ILIKE '%${keyword}%' OR first_name ILIKE '%${keyword}%' ORDER BY id ${method} LIMIT $1 OFFSET $2`;
   const value = [limit,offset];
   db.query(que,value,(err,res)=>{
     cb(err,res);
