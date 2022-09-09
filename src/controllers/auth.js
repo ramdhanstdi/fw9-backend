@@ -208,7 +208,7 @@ exports.transferToOthers = (req,res) => {
 
 exports.historyTransaction = (req,res) => {
   const id = req.userAuth.id;
-  const {sortBy='time_transfer',sort='DESC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
+  const {sortBy='id',sort='DESC',limit=parseInt(LIMIT_DATA), page=1} = req.query;
   const offset = (page-1) * limit;
   TransModels.historyTransaction(id,sortBy,sort,limit,offset,(err,result)=>{
     if(err){
