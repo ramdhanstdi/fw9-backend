@@ -30,3 +30,22 @@ LIMIT_DATA={number}
 MAX_SIZE={photo-size-in-mb}
 APP_KEY={your-secret-key}
 CLOUDINARY_URL={your-cludinary-url}
+```
+
+## Table of EndPoint
+|url|method|desc|
+|---|------|----|
+|/auth/register|POST|register new user|
+|/auth/login|POST|login user|
+|/auth/createPin|POST|create pin user|
+|/profile|GET|to get profile|
+|/profile|PATCH|edit profile user include edit photo|
+|/number|POST|to add number phone|
+|/number|PATCH|to edit number phone|
+|/topUp|PATCH|to top up balance user|
+|/transfer|POST|to transfer between 2 user|
+|/historyTransaction|GET|get history transaction user|
+|/changePin|PATCH|to change pin user|
+|/changePassword|PATCH|to change password user|
+
+
